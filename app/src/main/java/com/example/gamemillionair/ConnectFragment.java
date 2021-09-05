@@ -70,8 +70,8 @@ public class ConnectFragment extends Fragment {
         String host = etHost.getText().toString();
         int port = Integer.parseInt(etPort.getText().toString());
 
-        IClientAction iClientAction = (IClientAction) getActivity();
-        iClientAction.connect(host, port);
+        MainActivity ma= (MainActivity) getActivity();
+        ma.connect(host, port);
 
     }
 

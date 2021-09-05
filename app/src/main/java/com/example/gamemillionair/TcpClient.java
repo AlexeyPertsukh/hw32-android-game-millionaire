@@ -19,11 +19,15 @@ public class TcpClient implements IConst {
 
     private String host;
     private int port;
-    private IClientAction iClientAction;
+    private OnReadStringQuestionsListener onReadStringQuestionsListener;
 
-    public TcpClient(IClientAction iClientAction) {
+    public TcpClient() {
 
-        this.iClientAction = iClientAction;
+    }
+
+
+    public void setOnReadListener(OnReadStringQuestionsListener onReadStringQuestionsListener) {
+        this.onReadStringQuestionsListener = onReadStringQuestionsListener;
     }
 
     public void connect(String host, int port) {
@@ -71,7 +75,10 @@ public class TcpClient implements IConst {
         @Override
         protected void onPostExecute(ArrayList<String> list) {
             super.onPostExecute(list);
-            iClientAction.tcpClientAction(list);
+            if(onReadStringQuestionsListener != null) {
+                onReadStringQuestionsListener.onReadStringQuestions(list);
+            }
+
 //            showGameFragment(list);
         }
 
