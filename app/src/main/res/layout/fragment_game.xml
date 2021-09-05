@@ -14,72 +14,59 @@
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="72dp"
-        android:text="TextView"
+        android:text="Question"
         android:textColor="@color/white"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvAnswer1"
-        android:layout_width="315dp"
-        android:layout_height="50sp"
-        android:layout_marginTop="24dp"
+        style="@style/StyleTvAnswer"
+        android:layout_marginTop="36dp"
         android:background="@drawable/draw_tv_white"
-        android:text="TextView"
-        android:textColor="@color/gray"
-        android:textSize="22sp"
+        android:gravity="left|center"
+        android:text="Answer1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvQuestion"
-        android:gravity="left|center"
         />
 
     <TextView
         android:id="@+id/tvAnswer2"
-        android:layout_width="315dp"
-        android:layout_height="50sp"
+        style="@style/StyleTvAnswer"
         android:layout_marginTop="24dp"
         android:background="@drawable/draw_tv_white"
-        android:text="TextView"
-        android:textColor="@color/gray"
-        android:textSize="22sp"
+        android:gravity="left|center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAnswer1"
-        android:gravity="left|center"
+        android:text="Answer2"
         />
 
     <TextView
         android:id="@+id/tvAnswer3"
-        android:layout_width="315dp"
-        android:layout_height="50sp"
+        style="@style/StyleTvAnswer"
         android:layout_marginTop="24dp"
         android:background="@drawable/draw_tv_white"
-        android:text="TextView"
-        android:textColor="@color/gray"
-        android:textSize="22sp"
+        android:gravity="left|center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAnswer2"
-        android:gravity="left|center"
+        android:text="Answer3"
         />
 
     <TextView
         android:id="@+id/tvAnswer4"
-        android:layout_width="315dp"
-        android:layout_height="50sp"
+        style="@style/StyleTvAnswer"
         android:layout_marginTop="24dp"
         android:background="@drawable/draw_tv_white"
-        android:text="TextView"
-        android:textColor="@color/gray"
-        android:textSize="22sp"
+        android:gravity="left|center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvAnswer3"
-        android:gravity="left|center"
+        android:text="Answer4"
         />
 
 
