@@ -11,7 +11,10 @@ public class Game implements Serializable {
     private final ArrayList<Question> actualQuestions;
     private final ArrayList<Question> oldQuestions;
     private Question currentQuestion;
-    private Round round;
+    private final Round round;
+    private List<String> currentAnswers;
+
+
 
 
     public Game() {
@@ -55,6 +58,8 @@ public class Game implements Serializable {
         int num = random(actualQuestions.size());
         currentQuestion = actualQuestions.remove(num);
         oldQuestions.add(currentQuestion);
+
+        currentAnswers = getAllAnswers(currentQuestion);
         round.inc();
     }
 
@@ -74,13 +79,13 @@ public class Game implements Serializable {
         return round.getBet();
     }
 
-    public int getNumRound(){
-        return round.getNumRound();
+    public String getAnswer(int num) {
+        return currentAnswers.get(num);
     }
 
-    public List<String> getAllAnswers() {
-        List<String> answers = new ArrayList<>(currentQuestion.getWrongAnswers());
-        answers.add(currentQuestion.getCorrectAnswer());
+    public static List<String> getAllAnswers(Question question) {
+        List<String> answers = new ArrayList<>(question.getWrongAnswers());
+        answers.add(question.getCorrectAnswer());
         Collections.shuffle(answers);
         return answers;
     }
@@ -95,7 +100,7 @@ public class Game implements Serializable {
 
     //РАУНД
     private static class Round {
-        private final int[] BETS = {100, 200, 300, 500, 1000,
+        private final int[] BETS = {0, 100, 200, 300, 500, 1000,
                 2_000, 4_000, 8_000, 16_000, 32_000,
                 64_000, 125_000, 255_000, 500_000, 1000_000};
         private int step;
@@ -112,19 +117,13 @@ public class Game implements Serializable {
         }
 
         public boolean isEnd(){
-            return step == (BETS.length - 1);
+            return step == (BETS.length);
         }
 
         public int getBet() {
             return BETS[step];
         }
 
-        //номер раунда - начинается с 1
-        public int getNumRound() {
-            return step + 1;
-        }
-
-        //номер шага - начинается с 0
         public int getStep() {
             return step;
         }

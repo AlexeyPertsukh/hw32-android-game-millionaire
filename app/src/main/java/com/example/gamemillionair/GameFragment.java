@@ -22,19 +22,13 @@ import static com.example.gamemillionair.R.drawable.*;
  */
 public class GameFragment extends Fragment implements IConst, IToast, IClickItem {
 
-    private RecyclerView rvAnswers;
-    RecyclerView.Adapter adapter;
+    private Game game;
+
     TextView tvQuestion;
     TextView tvAnswer1;
     TextView tvAnswer2;
     TextView tvAnswer3;
     TextView tvAnswer4;
-
-    Question currentQuestion;
-
-    private ArrayList<String> listAnswers;
-    ArrayList<Question> questions;
-    ArrayList<Question> workQuestions;
 
     boolean isChecked;
 
@@ -85,13 +79,10 @@ public class GameFragment extends Fragment implements IConst, IToast, IClickItem
         View view = inflater.inflate(R.layout.fragment_game, container, false);
         initViews(view);
         initListeners();
-        listAnswers = new ArrayList<>();
+
 
         if(getArguments() != null) {
-            Game game = (Game) getArguments().getSerializable(KEY_GAME);
-            questions = game.getActualQuestions();
-            workQuestions = new ArrayList<>(questions);
-            Collections.shuffle(workQuestions);
+            game = (Game) getArguments().getSerializable(KEY_GAME);
             setAndShowQuestion();
         }
 
@@ -138,19 +129,13 @@ public class GameFragment extends Fragment implements IConst, IToast, IClickItem
 
     private void setAndShowQuestion() {
         reinitTextViews();
-        if(workQuestions.size() <= 0) {
-            workQuestions = new ArrayList<>(questions);
-        }
-        currentQuestion = workQuestions.remove(random(workQuestions.size()));
-        listAnswers = new ArrayList<>(currentQuestion.getWrongAnswers());
-        listAnswers.add(currentQuestion.getCorrectAnswer());
-        Collections.shuffle(listAnswers);
+        game.nextQuestion();
 
-        tvQuestion.setText(currentQuestion.getStrQuestion());
-        tvAnswer1.setText("  A. " + listAnswers.get(0));
-        tvAnswer2.setText("  B. " + listAnswers.get(1));
-        tvAnswer3.setText("  C. " + listAnswers.get(2));
-        tvAnswer4.setText("  D. " + listAnswers.get(3));
+        tvQuestion.setText(game.getStrQuestion());
+        tvAnswer1.setText("  A. " + game.getAnswer(0));
+        tvAnswer2.setText("  B. " + game.getAnswer(1));
+        tvAnswer3.setText("  C. " + game.getAnswer(2));
+        tvAnswer4.setText("  D. " + game.getAnswer(3));
 
 
     }
@@ -177,7 +162,7 @@ public class GameFragment extends Fragment implements IConst, IToast, IClickItem
     }
 
     private void showCorrectAnswer(TextView tv, int num) {
-        if(currentQuestion.checkCorrectAnswer(listAnswers.get(num))) {
+        if(game.checkCorrectAnswer(game.getAnswer(num))) {
             tv.setBackgroundResource(draw_tv_green);
         } else {
             tv.setBackgroundResource(draw_tv_red);
@@ -213,8 +198,8 @@ public class GameFragment extends Fragment implements IConst, IToast, IClickItem
     private TextView getTvCorrectAnswer() {
         TextView[] tvs = getTvAnswers();
 
-        for (int i = 0; i < listAnswers.size(); i++) {
-            if(currentQuestion.checkCorrectAnswer(listAnswers.get(i))) {
+        for (int i = 0; i < 4; i++) {
+            if(game.checkCorrectAnswer(game.getAnswer(i))) {
                 return tvs[i];
             }
         }
