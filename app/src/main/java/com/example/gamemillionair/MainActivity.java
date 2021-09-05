@@ -10,15 +10,12 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
 
     private ConnectFragment connectFragment;
     private GameFragment gameFragment;
-    private TcpClient tcpClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        tcpClient = new TcpClient();
-        tcpClient.setOnReadListener(this::onReadStringQuestions);
 
         initFragments();
         showConnectFragment();
@@ -52,12 +49,7 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
     }
 
 
-    public void connect(String host, int port) {
-        tcpClient.connect(host, port);
-    }
 
-    public void onReadStringQuestions(ArrayList<String> list) {
-        showGameFragment(list);
-    }
+
 
 }

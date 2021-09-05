@@ -42,6 +42,8 @@ public class TcpClient implements IConst {
         connectTask.execute(socketAddress);
     }
 
+
+    //
     class ConnectTask extends AsyncTask<SocketAddress, Integer, ArrayList<String>> {
 
         private Socket socket;
@@ -119,6 +121,10 @@ public class TcpClient implements IConst {
         public List<String> getList() {
             return list;
         }
+    }
 
+    //
+    public interface OnReadStringQuestionsListener {
+        void onReadStringQuestions(ArrayList<String> list);
     }
 }

@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link ConnectFragment#newInstance} factory method to
@@ -21,8 +23,8 @@ public class ConnectFragment extends Fragment {
     private EditText etHost;
     private EditText etPort;
 
-    private String mParam1;
-    private String mParam2;
+    private TcpClient tcpClient;
+
 
     public ConnectFragment() {
 
@@ -40,6 +42,7 @@ public class ConnectFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
@@ -50,6 +53,10 @@ public class ConnectFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
+
+        tcpClient = new TcpClient();
+        tcpClient.setOnReadListener(this::onReadStringQuestions);
+
         initViews(view);
         initListeners(view);
 
@@ -70,9 +77,15 @@ public class ConnectFragment extends Fragment {
         String host = etHost.getText().toString();
         int port = Integer.parseInt(etPort.getText().toString());
 
-        MainActivity ma= (MainActivity) getActivity();
-        ma.connect(host, port);
+        tcpClient.connect(host, port);
 
+    }
+
+    public void onReadStringQuestions(ArrayList<String> list) {
+        MainActivity ma = (MainActivity) getActivity();
+        if(ma != null) {
+            ma.showGameFragment(list);
+        }
     }
 
 
