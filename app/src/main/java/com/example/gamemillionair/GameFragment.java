@@ -1,7 +1,5 @@
 package com.example.gamemillionair;
 
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -9,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -92,7 +88,8 @@ public class GameFragment extends Fragment implements IConst, IToast, IClickItem
         listAnswers = new ArrayList<>();
 
         if(getArguments() != null) {
-            questions = (ArrayList<Question>) getArguments().getSerializable(KEY_QUESTIONS);
+            Game game = (Game) getArguments().getSerializable(KEY_GAME);
+            questions = game.getActualQuestions();
             workQuestions = new ArrayList<>(questions);
             Collections.shuffle(workQuestions);
             setAndShowQuestion();
@@ -149,7 +146,7 @@ public class GameFragment extends Fragment implements IConst, IToast, IClickItem
         listAnswers.add(currentQuestion.getCorrectAnswer());
         Collections.shuffle(listAnswers);
 
-        tvQuestion.setText(currentQuestion.getQuestion());
+        tvQuestion.setText(currentQuestion.getStrQuestion());
         tvAnswer1.setText("  A. " + listAnswers.get(0));
         tvAnswer2.setText("  B. " + listAnswers.get(1));
         tvAnswer3.setText("  C. " + listAnswers.get(2));

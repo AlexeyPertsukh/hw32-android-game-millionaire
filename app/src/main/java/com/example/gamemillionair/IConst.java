@@ -5,5 +5,6 @@ public interface IConst {
     int port = 6789;
 
     String KEY_QUESTIONS = "key_questions";
+    String KEY_GAME = "key_game";
 
 }

@@ -54,13 +54,10 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst, I
 
     public void showGameFragment(ArrayList<String> list) {
         Bundle args = new Bundle();
-        ArrayList<Question> questions = new ArrayList<>();
 
-        for (String jsonString : list) {
-            questions.add(Question.of(jsonString));
-        };
+        Game game = Game.ofJsonQuestions(list);
 
-        args.putSerializable(KEY_QUESTIONS, questions);
+        args.putSerializable(KEY_GAME, game);
 
         gameFragment.setArguments(args);
         getSupportFragmentManager()
