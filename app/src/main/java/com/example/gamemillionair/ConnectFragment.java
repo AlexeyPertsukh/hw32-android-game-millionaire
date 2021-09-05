@@ -12,11 +12,7 @@ import android.widget.EditText;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link ConnectFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class ConnectFragment extends Fragment {
 
     private Button btnConnect;

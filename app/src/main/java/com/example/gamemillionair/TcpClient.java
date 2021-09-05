@@ -25,7 +25,6 @@ public class TcpClient implements IConst {
 
     }
 
-
     public void setOnReadListener(OnReadStringQuestionsListener onReadStringQuestionsListener) {
         this.onReadStringQuestionsListener = onReadStringQuestionsListener;
     }
@@ -81,7 +80,6 @@ public class TcpClient implements IConst {
                 onReadStringQuestionsListener.onReadStringQuestions(list);
             }
 
-//            showGameFragment(list);
         }
 
         @Override
@@ -118,9 +116,6 @@ public class TcpClient implements IConst {
             }
         }
 
-        public List<String> getList() {
-            return list;
-        }
     }
 
     //

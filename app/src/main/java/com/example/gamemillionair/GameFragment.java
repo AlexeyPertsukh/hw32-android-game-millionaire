@@ -1,8 +1,6 @@
 package com.example.gamemillionair;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,11 +26,8 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
     private Map<String, TextView> map;
 
-    private boolean isChecked;
-
 
     public GameFragment() {
-
     }
 
 
@@ -64,7 +59,12 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
         if(getArguments() != null) {
             game = (Game) getArguments().getSerializable(KEY_GAME);
-            setAndShowQuestion();
+            game.setOnSelectAnswerListener(this::showSelectAnswer);
+            game.setOnSelectNewQuestionListener(this::showNewQuestion);
+            game.setOnReportQuestionResultListener(this::showResult);
+            game.nextQuestion();
+
+
         }
 
         return view;
@@ -78,10 +78,6 @@ public class GameFragment extends Fragment implements IConst, IToast {
     }
 
     private void clickAnswer(View view) {
-        if(isChecked) {
-            return;
-        }
-        isChecked = true;
         click((TextView) view);
     }
 
@@ -99,53 +95,46 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
 
     private void reinitTextViews() {
-        isChecked = false;
         for (int i = 0; i < tvAnswers.length; i++) {
             TextView tv = tvAnswers[i];
             tv.setBackgroundResource(draw_tv_white);
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private void setAndShowQuestion() {
-        reinitTextViews();
-        game.nextQuestion();
-
-        tvQuestion.setText(game.getStrQuestion());
-
-        String[] letters = {"A","B", "C", "D"};
-        map = new HashMap<>();
-        for (int i = 0; i < tvAnswers.length; i++) {
-            String text = String.format("%s. %s", letters[i], game.getAnswer(i));
-            tvAnswers[i].setText(text);
-            tvAnswers[i].setTag(game.getAnswer(i));
-            map.put(game.getAnswer(i),tvAnswers[i]);
-        }
-    }
-
-
 
     public void click(TextView tv) {
-        tv.setBackgroundResource(draw_tv_orange);
-
-        Handler handlerPauseIntrigue = new Handler();
-        handlerPauseIntrigue.postDelayed(() -> {
-            showCorrectAnswer(tv);
-        }, DELAY_INTRIGUE);
-
+        game.sendAnswer((String)tv.getTag());
     }
 
-    private void showCorrectAnswer(TextView tvAnswer) {
-        TextView tvCorrectAnswer = map.get(game.getCorrectAnswer());
-        tvCorrectAnswer.setBackgroundResource(draw_tv_green);
-        if(tvAnswer != tvCorrectAnswer) {
-            tvAnswer.setBackgroundResource(draw_tv_red);
-        }
+    private void showSelectAnswer(String selectedAnswer) {
+        TextView tv = map.get(selectedAnswer);
+        tv.setBackgroundResource(draw_tv_orange);
+    }
 
-        Handler handlerPauseResult = new Handler();
-        handlerPauseResult.postDelayed(() -> {
-            setAndShowQuestion();
-        }, DELAY_RESULT);
+
+    void showResult(String selectedAnswer, String correctAnswer) {
+        TextView tvCorrectAnswer = map.get(correctAnswer);
+        TextView tvSelectedAnswer = map.get(selectedAnswer);
+
+        tvCorrectAnswer.setBackgroundResource(draw_tv_green);
+        if (tvSelectedAnswer != tvCorrectAnswer) {
+            tvSelectedAnswer.setBackgroundResource(draw_tv_red);
+        }
+    }
+
+    void showNewQuestion(String question, String... answers) {
+        reinitTextViews();
+
+        tvQuestion.setText(question);
+
+        String[] letters = {"A", "B", "C", "D"};
+        map = new HashMap<>();
+        for (int i = 0; i < tvAnswers.length; i++) {
+            String text = String.format("%s. %s", letters[i], answers[i]);
+            tvAnswers[i].setText(text);
+            tvAnswers[i].setTag(answers[i]);
+            map.put(answers[i], tvAnswers[i]);
+        }
     }
 
 
