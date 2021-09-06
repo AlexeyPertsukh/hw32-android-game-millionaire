@@ -1,5 +1,6 @@
 package com.example.gamemillionair;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -11,15 +12,16 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
-import java.util.List;
 
 public class TcpClient implements IConst {
+    private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "не удалось подключиться к серверу %s:%d ";
     private final static String QUERY = "select *";
     private ConnectTask connectTask;
 
     private String host;
     private int port;
     private OnReadStringQuestionsListener onReadStringQuestionsListener;
+//    private OnReadStringQuestionsFiledListener onReadStringQuestionsFiledListener;
 
     public TcpClient() {
 
@@ -28,6 +30,10 @@ public class TcpClient implements IConst {
     public void setOnReadListener(OnReadStringQuestionsListener onReadStringQuestionsListener) {
         this.onReadStringQuestionsListener = onReadStringQuestionsListener;
     }
+
+//    public void setOnReadStringQuestionsFiledListener(OnReadStringQuestionsFiledListener onReadStringQuestionsFiledListener) {
+//        this.onReadStringQuestionsFiledListener = onReadStringQuestionsFiledListener;
+//    }
 
     public void connect(String host, int port) {
 
@@ -43,7 +49,7 @@ public class TcpClient implements IConst {
 
 
     //
-    class ConnectTask extends AsyncTask<SocketAddress, Integer, ArrayList<String>> {
+    class ConnectTask extends AsyncTask<SocketAddress, Integer, DataQuestions> {
 
         private Socket socket;
         private PrintWriter printWriter;
@@ -55,31 +61,33 @@ public class TcpClient implements IConst {
         }
 
         @Override
-        protected ArrayList<String> doInBackground(SocketAddress... socketAddresses) {
+        protected DataQuestions doInBackground(SocketAddress... socketAddresses) {
+            DataQuestions dataQuestions;
+            Exception exception = null;
             list = new ArrayList<>();
+
             try {
                 socket = new Socket();
                 socket.connect(socketAddresses[0], 5000);
                 if(socket.isConnected()) {
                     sendQuery();
                     readServer();
+                    throw new IOException("!!!!");
                 }
             } catch (IOException e) {
-                e.printStackTrace();
-//                showToast(getCo,"IOException on doInBackground");
                 Log.d("LOG","IOException on doInBackground");
-                return null;
+                exception = new ConnectException("Не удалось получить данные с сервера");
             }
-            return list;
+            return new DataQuestions(list, exception);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<String> list) {
-            super.onPostExecute(list);
-            if(onReadStringQuestionsListener != null) {
-                onReadStringQuestionsListener.onReadStringQuestions(list);
-            }
+        protected void onPostExecute(DataQuestions dataQuestions) {
+            super.onPostExecute(dataQuestions);
 
+            if(onReadStringQuestionsListener != null) {
+                onReadStringQuestionsListener.action(dataQuestions);
+            }
         }
 
         @Override
@@ -120,6 +128,33 @@ public class TcpClient implements IConst {
 
     //
     public interface OnReadStringQuestionsListener {
-        void onReadStringQuestions(ArrayList<String> list);
+        void action(DataQuestions dataQuestions);
     }
+
+    //
+    public static class DataQuestions {
+        private final ArrayList<String> list;
+        private final Exception exception;
+
+        public DataQuestions(ArrayList<String> list, Exception exception) {
+            this.list = list;
+            this.exception = exception;
+        }
+
+        public boolean isError() {
+            return exception != null;
+        }
+
+        public Exception getException() {
+            return exception;
+        }
+
+        public ArrayList<String> getList() {
+            return list;
+        }
+    }
+
+//    public interface OnReadStringQuestionsFiledListener {
+//        void action(String message);
+//    }
 }

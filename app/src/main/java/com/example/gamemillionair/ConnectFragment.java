@@ -51,7 +51,7 @@ public class ConnectFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_connect, container, false);
 
         tcpClient = new TcpClient();
-        tcpClient.setOnReadListener(this::onReadStringQuestions);
+//        tcpClient.setOnReadListener(this::onReadStringQuestions);
 
         initViews(view);
         initListeners(view);
@@ -77,12 +77,12 @@ public class ConnectFragment extends Fragment {
 
     }
 
-    public void onReadStringQuestions(ArrayList<String> list) {
-        MainActivity ma = (MainActivity) getActivity();
-        if(ma != null) {
-            ma.showGameFragment(list);
-        }
-    }
+//    public void onReadStringQuestions(ArrayList<String> list, Exception ex) {
+//        MainActivity ma = (MainActivity) getActivity();
+//        if(ma != null) {
+//            ma.showGameFragment(list);
+//        }
+//    }
 
 
 }

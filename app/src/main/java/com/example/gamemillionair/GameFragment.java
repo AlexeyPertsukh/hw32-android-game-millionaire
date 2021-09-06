@@ -63,15 +63,11 @@ public class GameFragment extends Fragment implements IConst, IToast {
             game.setOnSelectNewQuestionListener(this::showNewQuestion);
             game.setOnReportQuestionResultListener(this::showResult);
             game.nextQuestion();
-
-
         }
-
         return view;
     }
 
     private void initListeners() {
-
         for (int i = 0; i < tvAnswers.length; i++) {
             tvAnswers[i].setOnClickListener(this::clickAnswer);
         }
