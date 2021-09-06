@@ -8,9 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 
 public class InputQuestionsFragment extends Fragment implements IToast {
@@ -33,7 +30,6 @@ public class InputQuestionsFragment extends Fragment implements IToast {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_input_questions, container, false);
         initViews(view);
         initListeners();
@@ -68,28 +64,21 @@ public class InputQuestionsFragment extends Fragment implements IToast {
         } catch (Exception ex) {
             showToast(getContext(), "Не удалось прочитать вопросы с сервера");
         }
-
     }
 
     private void initTcpClient() {
         tcpClient = new TcpClient();
         tcpClient.setOnReadListener(this::onReadStringQuestions);
-//        tcpClient.setOnReadStringQuestionsFiledListener(this::filedConnectToServer);
     }
 
-    private void filedConnectToServer(String message) {
-        showToast(getContext(), message);
-    }
-
-
-    public void onReadStringQuestions(TcpClient.DataQuestions dataQuestions) {
+    public void onReadStringQuestions(DataQuestions dataQuestions) {
         if(dataQuestions.isError()) {
-            showToast(getContext(), dataQuestions.getException().getMessage());
+            showToast(getContext(), dataQuestions.getExceptionMessage());
             return;
         }
         MainActivity ma = (MainActivity) getActivity();
         if(ma != null) {
-            ma.showGameFragment(dataQuestions.getList());
+            ma.showGameFragment(dataQuestions.getListStrQuestions());
         }
     }
 

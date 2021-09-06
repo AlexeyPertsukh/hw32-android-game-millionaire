@@ -107,7 +107,6 @@ public class GameFragment extends Fragment implements IConst, IToast {
         tv.setBackgroundResource(draw_tv_orange);
     }
 
-
     void showResult(String selectedAnswer, String correctAnswer) {
         TextView tvCorrectAnswer = map.get(correctAnswer);
         TextView tvSelectedAnswer = map.get(selectedAnswer);

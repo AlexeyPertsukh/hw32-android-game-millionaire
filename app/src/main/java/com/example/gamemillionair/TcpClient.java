@@ -21,7 +21,6 @@ public class TcpClient implements IConst {
     private String host;
     private int port;
     private OnReadStringQuestionsListener onReadStringQuestionsListener;
-//    private OnReadStringQuestionsFiledListener onReadStringQuestionsFiledListener;
 
     public TcpClient() {
 
@@ -30,10 +29,6 @@ public class TcpClient implements IConst {
     public void setOnReadListener(OnReadStringQuestionsListener onReadStringQuestionsListener) {
         this.onReadStringQuestionsListener = onReadStringQuestionsListener;
     }
-
-//    public void setOnReadStringQuestionsFiledListener(OnReadStringQuestionsFiledListener onReadStringQuestionsFiledListener) {
-//        this.onReadStringQuestionsFiledListener = onReadStringQuestionsFiledListener;
-//    }
 
     public void connect(String host, int port) {
 
@@ -62,7 +57,6 @@ public class TcpClient implements IConst {
 
         @Override
         protected DataQuestions doInBackground(SocketAddress... socketAddresses) {
-            DataQuestions dataQuestions;
             Exception exception = null;
             list = new ArrayList<>();
 
@@ -123,7 +117,6 @@ public class TcpClient implements IConst {
                 Log.d("LOG","IOException on readServer()");
             }
         }
-
     }
 
     //
@@ -131,30 +124,4 @@ public class TcpClient implements IConst {
         void action(DataQuestions dataQuestions);
     }
 
-    //
-    public static class DataQuestions {
-        private final ArrayList<String> list;
-        private final Exception exception;
-
-        public DataQuestions(ArrayList<String> list, Exception exception) {
-            this.list = list;
-            this.exception = exception;
-        }
-
-        public boolean isError() {
-            return exception != null;
-        }
-
-        public Exception getException() {
-            return exception;
-        }
-
-        public ArrayList<String> getList() {
-            return list;
-        }
-    }
-
-//    public interface OnReadStringQuestionsFiledListener {
-//        void action(String message);
-//    }
 }
