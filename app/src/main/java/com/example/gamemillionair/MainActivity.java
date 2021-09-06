@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
 
     private ConnectFragment connectFragment;
     private GameFragment gameFragment;
+    private InputQuestionsFragment inputQuestionsFragment;
 
 
     @Override
@@ -18,12 +19,21 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
         setContentView(R.layout.activity_main);
 
         initFragments();
-        showConnectFragment();
+//        showConnectFragment();
+        showInputQuestionsFragment();
     }
 
     private void initFragments() {
         connectFragment = new ConnectFragment();
         gameFragment = new GameFragment();
+        inputQuestionsFragment = new InputQuestionsFragment();
+    }
+
+    public void showInputQuestionsFragment() {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, inputQuestionsFragment)
+                .commit();
     }
 
 
