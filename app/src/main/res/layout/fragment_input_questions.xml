@@ -21,29 +21,27 @@
         android:id="@+id/btnServerQuestions"
         android:layout_width="282dp"
         android:layout_height="65dp"
-        android:layout_marginTop="44dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+        android:layout_marginTop="24dp"
+        android:background="@color/white"
         android:text="загрузить вопросы с сервера"
+        android:textColor="@color/gray"
         android:textSize="14sp"
-        android:background="@color/orange"
-        android:textColor="@color/white"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnLocalQuestions" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLocalQuestions"
         android:layout_width="282dp"
         android:layout_height="65dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="36dp"
+        android:background="@color/green"
+        android:text="стандартные вопросы"
+        android:textColor="@color/white"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnServerQuestions"
-        android:text="использовать стандартные вопросы"
-        android:textSize="14sp"
-        android:background="@color/green"
-        android:textColor="@color/white"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
 </androidx.constraintlayout.widget.ConstraintLayout>

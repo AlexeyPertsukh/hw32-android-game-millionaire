@@ -11,14 +11,12 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
     private GameFragment gameFragment;
     private InputQuestionsFragment inputQuestionsFragment;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initFragments();
-//        showConnectFragment();
         showInputQuestionsFragment();
     }
 
@@ -37,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
 
     public void showGameFragment(ArrayList<String> list) {
         Bundle args = new Bundle();
-
         Game game = Game.ofJsonQuestions(list);
 
         args.putSerializable(KEY_GAME, game);

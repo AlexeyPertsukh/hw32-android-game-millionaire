@@ -17,6 +17,7 @@ public class CsvReader implements IConst {
     private ArrayList<String> list;
     private OnEndReadStringsListener onEndReadStringsListener;
     private AssetManager assetManager;
+    private boolean isExecute;
 
     public CsvReader(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -26,13 +27,24 @@ public class CsvReader implements IConst {
         this.onEndReadStringsListener = onEndReadStringsListener;
     }
 
-    private void read(String fileName) {
+    public void read(String fileName) {
         ReaderTask readerTask = new ReaderTask();
         readerTask.execute("");
     }
 
+    public boolean isExecute() {
+        return isExecute;
+    }
 
+    //
     private class ReaderTask extends AsyncTask<String, Void, DataStrings> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            isExecute = true;
+        }
+
         @Override
         protected DataStrings doInBackground(String... params) {
             String fileName = params[0];
@@ -62,6 +74,7 @@ public class CsvReader implements IConst {
         @Override
         protected void onPostExecute(DataStrings dataStrings) {
             super.onPostExecute(dataStrings);
+            isExecute = false;
             if(onEndReadStringsListener != null) {
                 onEndReadStringsListener.action(dataStrings);
             }

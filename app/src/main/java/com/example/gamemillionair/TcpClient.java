@@ -17,6 +17,8 @@ public class TcpClient implements IConst {
     private final static String QUERY = "select *";
     private final static String KEY_LOG = "TcpClient";
 
+    private boolean isExecute;
+
     private OnEndReadStringsListener onEndReadStringsListener;
 
     public TcpClient() {
@@ -36,6 +38,10 @@ public class TcpClient implements IConst {
         connectTask.execute(socketAddress);
     }
 
+    public boolean isExecute() {
+        return isExecute;
+    }
+
     //
     class ConnectTask extends AsyncTask<InetSocketAddress, Void, DataStrings> {
 
@@ -46,6 +52,7 @@ public class TcpClient implements IConst {
 
         @Override
         protected void onPreExecute() {
+            isExecute = true;
         }
 
         @Override
@@ -59,7 +66,6 @@ public class TcpClient implements IConst {
                 if(socket.isConnected()) {
                     sendQuery();
                     readServer();
-                    throw new IOException("!!!!");
                 }
             } catch (IOException e) {
                 Log.d("LOG","IOException on doInBackground");
@@ -73,7 +79,7 @@ public class TcpClient implements IConst {
         @Override
         protected void onPostExecute(DataStrings dataStrings) {
             super.onPostExecute(dataStrings);
-
+            isExecute = false;
             if(onEndReadStringsListener != null) {
                 onEndReadStringsListener.action(dataStrings);
             }

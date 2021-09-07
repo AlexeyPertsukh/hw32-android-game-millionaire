@@ -9,14 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-
-
-public class InputQuestionsFragment extends Fragment implements IToast {
+public class InputQuestionsFragment extends Fragment implements IToast, IConst {
 
     private Button btnServerQuestions;
     private Button btnLocalQuestions;
 
     private TcpClient tcpClient;
+    private CsvReader csvReader;
 
 
     @Override
@@ -36,6 +35,7 @@ public class InputQuestionsFragment extends Fragment implements IToast {
         initListeners();
 
         initTcpClient();
+        initCsvReader();
 
         return view;
     }
@@ -46,15 +46,23 @@ public class InputQuestionsFragment extends Fragment implements IToast {
     }
 
     private void initListeners() {
-        btnLocalQuestions.setOnClickListener(this::loadQuestionsFromFile);
+        btnLocalQuestions.setOnClickListener(this::loadQuestionsFromCsvFile);
         btnServerQuestions.setOnClickListener(this::loadQuestionsFromServer);
     }
 
-    private void loadQuestionsFromFile(View view) {
+    private void loadQuestionsFromCsvFile(View view) {
+        if(tcpClient.isExecute()) {
+            return;
+        }
+
+        csvReader.read(FILE_NAME_CSV_QUESTIONS);
 
     }
 
     private void loadQuestionsFromServer(View view) {
+        if(csvReader.isExecute()) {
+            return;
+        }
 //        String host = etHost.getText().toString();
 //        int port = Integer.parseInt(etPort.getText().toString());
 
@@ -63,16 +71,24 @@ public class InputQuestionsFragment extends Fragment implements IToast {
         try {
             tcpClient.connect("192.168.0.102", 6789);
         } catch (Exception ex) {
-            showToast(getContext(), "Не удалось прочитать вопросы с сервера");
+            showToast(getContext(), "Не удалось прочитать вопросы с сервера!!!");
         }
     }
 
     private void initTcpClient() {
         tcpClient = new TcpClient();
-        tcpClient.setOnEndReadStringsListener(this::onReadStringQuestions);
+        tcpClient.setOnEndReadStringsListener(this::onReadStringsFromServer);
     }
 
-    public void onReadStringQuestions(DataStrings dataStrings) {
+    private void initCsvReader() {
+        if(getActivity() != null) {
+            csvReader = new CsvReader(getActivity().getAssets());
+            csvReader.setOnEndReadStringListener(this::onReadStringsFromCsv);
+
+        }
+    }
+
+    public void onReadStringsFromServer(DataStrings dataStrings) {
         if(dataStrings.isError()) {
             showToast(getContext(), dataStrings.getExceptionMessage());
             return;
@@ -82,5 +98,13 @@ public class InputQuestionsFragment extends Fragment implements IToast {
             ma.showGameFragment(dataStrings.getList());
         }
     }
+
+    private void onReadStringsFromCsv(DataStrings dataStrings) {
+        if(dataStrings.isError()) {
+            showToast(getContext(), dataStrings.getExceptionMessage());
+            return;
+        }
+    }
+
 
 }
