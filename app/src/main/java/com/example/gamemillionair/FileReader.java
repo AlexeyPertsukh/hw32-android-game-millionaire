@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class CsvReader implements IConst {
+public class FileReader implements IConst {
     private static final String FORMAT_MESSAGE_FAIL_READ_FILE = "Не удалось прочитать файл %s";
     private final static String KEY_LOG = "CsvReader";
 
@@ -19,7 +19,7 @@ public class CsvReader implements IConst {
     private AssetManager assetManager;
     private boolean isExecute;
 
-    public CsvReader(AssetManager assetManager) {
+    public FileReader(AssetManager assetManager) {
         this.assetManager = assetManager;
     }
 
@@ -29,12 +29,14 @@ public class CsvReader implements IConst {
 
     public void read(String fileName) {
         ReaderTask readerTask = new ReaderTask();
-        readerTask.execute("");
+        readerTask.execute(fileName);
     }
 
     public boolean isExecute() {
         return isExecute;
     }
+
+
 
     //
     private class ReaderTask extends AsyncTask<String, Void, DataStrings> {
@@ -61,7 +63,7 @@ public class CsvReader implements IConst {
             } catch(IOException e){
                 String message = String.format(FORMAT_MESSAGE_FAIL_READ_FILE, fileName);
                 Log.e(KEY_LOG, message);
-                exception = new CsvReaderException(message);
+                exception = new FileReaderException(message);
             }
             return new DataStrings(list, exception);
         }

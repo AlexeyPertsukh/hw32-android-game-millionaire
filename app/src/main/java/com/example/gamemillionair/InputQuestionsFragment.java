@@ -9,13 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.ArrayList;
+
 public class InputQuestionsFragment extends Fragment implements IToast, IConst {
 
     private Button btnServerQuestions;
     private Button btnLocalQuestions;
 
     private TcpClient tcpClient;
-    private CsvReader csvReader;
+    private FileReader fileReader;
 
 
     @Override
@@ -55,12 +57,12 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
             return;
         }
 
-        csvReader.read(FILE_NAME_CSV_QUESTIONS);
+        fileReader.read(FILE_NAME_CSV_QUESTIONS);
 
     }
 
     private void loadQuestionsFromServer(View view) {
-        if(csvReader.isExecute()) {
+        if(fileReader.isExecute()) {
             return;
         }
 //        String host = etHost.getText().toString();
@@ -77,34 +79,41 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
 
     private void initTcpClient() {
         tcpClient = new TcpClient();
-        tcpClient.setOnEndReadStringsListener(this::onReadStringsFromServer);
+        tcpClient.setOnEndReadStringsListener(this::onEndReadStringsFromServer);
     }
 
     private void initCsvReader() {
         if(getActivity() != null) {
-            csvReader = new CsvReader(getActivity().getAssets());
-            csvReader.setOnEndReadStringListener(this::onReadStringsFromCsv);
+            fileReader = new FileReader(getActivity().getAssets());
+            fileReader.setOnEndReadStringListener(this::onEndReadStringsFromCsv);
 
         }
     }
 
-    public void onReadStringsFromServer(DataStrings dataStrings) {
+    public void onEndReadStringsFromServer(DataStrings dataStrings) {
         if(dataStrings.isError()) {
             showToast(getContext(), dataStrings.getExceptionMessage());
             return;
         }
+        ArrayList<Question> listQuestion = QuestionFabric.createFromJson(dataStrings.getList());
+        goToGame(listQuestion);
+
+    }
+
+    private void onEndReadStringsFromCsv(DataStrings dataStrings) {
+        if(dataStrings.isError()) {
+            showToast(getContext(), dataStrings.getExceptionMessage());
+            return;
+        }
+        ArrayList<Question> listQuestion = QuestionFabric.createFromCsv(dataStrings.getList());
+        goToGame(listQuestion);
+    }
+
+    private void goToGame(ArrayList<Question> listQuestion) {
         MainActivity ma = (MainActivity) getActivity();
         if(ma != null) {
-            ma.showGameFragment(dataStrings.getList());
+            ma.showGameFragment(listQuestion);
         }
     }
-
-    private void onReadStringsFromCsv(DataStrings dataStrings) {
-        if(dataStrings.isError()) {
-            showToast(getContext(), dataStrings.getExceptionMessage());
-            return;
-        }
-    }
-
 
 }

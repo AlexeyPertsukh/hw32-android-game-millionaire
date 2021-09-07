@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Question {
+    public static final int NUM_ANSWERS = 4;
+
     private static final String MESSAGE_EXCEPTION_JSON_CONVERT = "create question from json failed";
 
     private final String strQuestion;

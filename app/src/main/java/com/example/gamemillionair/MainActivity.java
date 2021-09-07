@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements IToast, IConst {
@@ -33,9 +34,9 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
     }
 
 
-    public void showGameFragment(ArrayList<String> list) {
+    public void showGameFragment(ArrayList<Question> listQuestion) {
         Bundle args = new Bundle();
-        Game game = Game.ofJsonQuestions(list);
+        Game game = new Game(listQuestion);
 
         args.putSerializable(KEY_GAME, game);
 

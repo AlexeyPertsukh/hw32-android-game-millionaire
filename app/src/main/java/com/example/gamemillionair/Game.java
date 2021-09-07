@@ -24,29 +24,10 @@ public class Game implements Serializable {
 
     private boolean isAnswerReceived;
 
-    public Game() {
-        actualQuestions = new ArrayList<>();
+    public Game(ArrayList<Question> actualQuestions) {
+        this.actualQuestions = actualQuestions;
         oldQuestions = new ArrayList<>();
         round = new Round();
-    }
-
-
-    public static Game ofJsonQuestions(List<String> listJson) {
-        Game game = new Game();
-        for (String json : listJson) {
-            game.addJsonQuestion(json);
-        }
-        return game;
-    }
-
-    public void addJsonQuestion(String jsonString) throws GameException{
-        Question question;
-        try {
-            question = Question.of(jsonString);
-        } catch (QuestionException ex) {
-            throw new GameException(ex.getMessage());
-        }
-        actualQuestions.add(question);
     }
 
     public void clearQuestions() {
@@ -109,9 +90,7 @@ public class Game implements Serializable {
 
     private void pauseUntilNewQuestion() {
         Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            nextQuestion();
-        }, DELAY_UNTIL_NEW_QUESTION);
+        handler.postDelayed(this::nextQuestion, DELAY_UNTIL_NEW_QUESTION);
     }
 
     void setOnSelectAnswerListener(OnSelectAnswerListener onSelectAnswerListener) {
