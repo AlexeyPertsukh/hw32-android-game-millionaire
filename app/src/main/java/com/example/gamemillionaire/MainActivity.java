@@ -1,10 +1,12 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import java.io.IOException;
+import com.example.gamemillionair.R;
+import com.example.gamemillionaire.question.Question;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements IToast, IConst {

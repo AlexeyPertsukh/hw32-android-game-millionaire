@@ -1,4 +1,4 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 import android.content.Context;
 import android.view.Gravity;

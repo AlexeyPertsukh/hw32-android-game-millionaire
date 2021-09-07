@@ -1,4 +1,4 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 public class GameException extends RuntimeException {
     public GameException(String message) {

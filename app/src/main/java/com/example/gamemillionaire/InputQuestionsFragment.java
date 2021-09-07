@@ -1,4 +1,4 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 import android.os.Bundle;
 
@@ -9,9 +9,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.example.gamemillionair.R;
+import com.example.gamemillionaire.question.Question;
+import com.example.gamemillionaire.question.QuestionFabric;
+import com.example.gamemillionaire.question.QuestionFabricException;
+import com.example.gamemillionaire.readers.DataStrings;
+import com.example.gamemillionaire.readers.FileReader;
+import com.example.gamemillionaire.readers.TcpClient;
+
 import java.util.ArrayList;
 
 public class InputQuestionsFragment extends Fragment implements IToast, IConst {
+
+//    private static final String MESSAGE_CSV_CONVERT_FILED = "ошибка преобразования вопроса из формата csv";
+//    private static final String MESSAGE_JSON_CONVERT_FILED = "ошибка преобразования вопроса из формата json";
 
     private Button btnServerQuestions;
     private Button btnLocalQuestions;
@@ -23,10 +34,10 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+//        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+//        }
     }
 
     @Override
@@ -95,9 +106,13 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
             showToast(getContext(), dataStrings.getExceptionMessage());
             return;
         }
-        ArrayList<Question> listQuestion = QuestionFabric.createFromJson(dataStrings.getList());
-        goToGame(listQuestion);
 
+        try {
+            ArrayList<Question> listQuestion = QuestionFabric.createFromJson(dataStrings.getList());
+            goToGame(listQuestion);
+        } catch (QuestionFabricException ex) {
+            showToast(getContext(), ex.getMessage());
+        }
     }
 
     private void onEndReadStringsFromCsv(DataStrings dataStrings) {
@@ -105,8 +120,14 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
             showToast(getContext(), dataStrings.getExceptionMessage());
             return;
         }
-        ArrayList<Question> listQuestion = QuestionFabric.createFromCsv(dataStrings.getList());
-        goToGame(listQuestion);
+
+        ArrayList<Question> listQuestion;
+        try {
+            listQuestion = QuestionFabric.createFromCsv(dataStrings.getList());
+            goToGame(listQuestion);
+        } catch (QuestionFabricException ex) {
+            showToast(getContext(), ex.getMessage());
+        }
     }
 
     private void goToGame(ArrayList<Question> listQuestion) {

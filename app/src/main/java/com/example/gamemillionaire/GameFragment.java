@@ -1,4 +1,4 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
+
+import com.example.gamemillionair.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,10 +45,10 @@ public class GameFragment extends Fragment implements IConst, IToast {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+//        if (getArguments() != null) {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+//        }
 
     }
 
@@ -68,8 +70,8 @@ public class GameFragment extends Fragment implements IConst, IToast {
     }
 
     private void initListeners() {
-        for (int i = 0; i < tvAnswers.length; i++) {
-            tvAnswers[i].setOnClickListener(this::clickAnswer);
+        for (TextView tvAnswer : tvAnswers) {
+            tvAnswer.setOnClickListener(this::clickAnswer);
         }
     }
 
@@ -91,8 +93,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
 
     private void reinitTextViews() {
-        for (int i = 0; i < tvAnswers.length; i++) {
-            TextView tv = tvAnswers[i];
+        for (TextView tv : tvAnswers) {
             tv.setBackgroundResource(draw_tv_white);
         }
     }

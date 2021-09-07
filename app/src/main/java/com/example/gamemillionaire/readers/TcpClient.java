@@ -1,8 +1,10 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire.readers;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.gamemillionaire.IConst;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,6 +45,7 @@ public class TcpClient implements IConst {
     }
 
     //
+    @SuppressLint("StaticFieldLeak")
     class ConnectTask extends AsyncTask<InetSocketAddress, Void, DataStrings> {
 
         private Socket socket;

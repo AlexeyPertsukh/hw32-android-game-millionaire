@@ -1,6 +1,8 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 import android.os.Handler;
+
+import com.example.gamemillionaire.question.Question;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class Game implements Serializable {
     private OnSelectNewQuestionListener onSelectNewQuestionListener;
     private OnSelectAnswerListener onSelectAnswerListener;
 
-    private boolean isAnswerReceived;
+    private boolean isAnswerExecute;
 
     public Game(ArrayList<Question> actualQuestions) {
         this.actualQuestions = actualQuestions;
@@ -40,7 +42,7 @@ public class Game implements Serializable {
     }
 
     public void nextQuestion(){
-        isAnswerReceived = false;
+        isAnswerExecute = false;
         if(actualQuestions.size() == 0) {
             throw new GameException(MESSAGE_NO_QUESTIONS);
         }
@@ -74,10 +76,10 @@ public class Game implements Serializable {
     }
 
     public void sendAnswer(String selectedAnswer) {
-        if(isAnswerReceived) {
+        if(isAnswerExecute) {
             return;
         }
-        isAnswerReceived = true;
+        isAnswerExecute = true;
         onSelectAnswerListener.onSelectAnswer(selectedAnswer);
         Handler handler = new Handler();
         handler.postDelayed(() -> {

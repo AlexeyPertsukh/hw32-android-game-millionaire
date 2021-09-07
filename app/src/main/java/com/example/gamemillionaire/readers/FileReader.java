@@ -1,8 +1,11 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire.readers;
 
+import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.gamemillionaire.IConst;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +42,7 @@ public class FileReader implements IConst {
 
 
     //
+    @SuppressLint("StaticFieldLeak")
     private class ReaderTask extends AsyncTask<String, Void, DataStrings> {
 
         @Override
