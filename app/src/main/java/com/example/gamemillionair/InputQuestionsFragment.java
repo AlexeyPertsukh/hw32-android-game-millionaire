@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 
+
 public class InputQuestionsFragment extends Fragment implements IToast {
 
     private Button btnServerQuestions;
@@ -68,17 +69,17 @@ public class InputQuestionsFragment extends Fragment implements IToast {
 
     private void initTcpClient() {
         tcpClient = new TcpClient();
-        tcpClient.setOnReadListener(this::onReadStringQuestions);
+        tcpClient.setOnEndReadStringsListener(this::onReadStringQuestions);
     }
 
-    public void onReadStringQuestions(DataQuestions dataQuestions) {
-        if(dataQuestions.isError()) {
-            showToast(getContext(), dataQuestions.getExceptionMessage());
+    public void onReadStringQuestions(DataStrings dataStrings) {
+        if(dataStrings.isError()) {
+            showToast(getContext(), dataStrings.getExceptionMessage());
             return;
         }
         MainActivity ma = (MainActivity) getActivity();
         if(ma != null) {
-            ma.showGameFragment(dataQuestions.getListStrQuestions());
+            ma.showGameFragment(dataStrings.getList());
         }
     }
 

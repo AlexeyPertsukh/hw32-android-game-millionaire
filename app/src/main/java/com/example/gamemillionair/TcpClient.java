@@ -10,41 +10,34 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.ArrayList;
 
 public class TcpClient implements IConst {
-    private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "не удалось подключиться к серверу %s:%d ";
+    private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "не удалось получить данные с сервера %s:%d ";
     private final static String QUERY = "select *";
-    private ConnectTask connectTask;
+    private final static String KEY_LOG = "TcpClient";
 
-    private String host;
-    private int port;
-    private OnReadStringQuestionsListener onReadStringQuestionsListener;
+    private OnEndReadStringsListener onEndReadStringsListener;
 
     public TcpClient() {
 
     }
 
-    public void setOnReadListener(OnReadStringQuestionsListener onReadStringQuestionsListener) {
-        this.onReadStringQuestionsListener = onReadStringQuestionsListener;
+    public void setOnEndReadStringsListener(OnEndReadStringsListener onEndReadStringsListener) {
+        this.onEndReadStringsListener = onEndReadStringsListener;
     }
 
     public void connect(String host, int port) {
 
-        this.host = host;
-        this.port = port;
-
         InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
 
-        connectTask = new ConnectTask();
-        SocketAddress socketAddress = new InetSocketAddress(host, port);
+        ConnectTask connectTask = new ConnectTask();
+        InetSocketAddress socketAddress = new InetSocketAddress(host, port);
         connectTask.execute(socketAddress);
     }
 
-
     //
-    class ConnectTask extends AsyncTask<SocketAddress, Integer, DataQuestions> {
+    class ConnectTask extends AsyncTask<InetSocketAddress, Void, DataStrings> {
 
         private Socket socket;
         private PrintWriter printWriter;
@@ -56,13 +49,13 @@ public class TcpClient implements IConst {
         }
 
         @Override
-        protected DataQuestions doInBackground(SocketAddress... socketAddresses) {
+        protected DataStrings doInBackground(InetSocketAddress... socketAddresses) {
             Exception exception = null;
             list = new ArrayList<>();
-
+            InetSocketAddress socketAddress = socketAddresses[0];
             try {
                 socket = new Socket();
-                socket.connect(socketAddresses[0], 5000);
+                socket.connect(socketAddress, 5000);
                 if(socket.isConnected()) {
                     sendQuery();
                     readServer();
@@ -70,24 +63,25 @@ public class TcpClient implements IConst {
                 }
             } catch (IOException e) {
                 Log.d("LOG","IOException on doInBackground");
-                exception = new ConnectException("Не удалось получить данные с сервера");
+                @SuppressLint("DefaultLocale") String message = String.format(FORMAT_MESSAGE_FAILED_CONNECTION,
+                        socketAddress.getHostString(), socketAddress.getPort());
+                exception = new ConnectException(message);
             }
-            return new DataQuestions(list, exception);
+            return new DataStrings(list, exception);
         }
 
         @Override
-        protected void onPostExecute(DataQuestions dataQuestions) {
-            super.onPostExecute(dataQuestions);
+        protected void onPostExecute(DataStrings dataStrings) {
+            super.onPostExecute(dataStrings);
 
-            if(onReadStringQuestionsListener != null) {
-                onReadStringQuestionsListener.action(dataQuestions);
+            if(onEndReadStringsListener != null) {
+                onEndReadStringsListener.action(dataStrings);
             }
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values) {
-//            pbProgress.setProgress(values[0]);
-//            tvResult.setText(String.valueOf(values[0]));
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
         }
 
         private void sendQuery() {
@@ -95,7 +89,7 @@ public class TcpClient implements IConst {
                 printWriter = new PrintWriter(socket.getOutputStream());
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("LOG","IOException on sendQuery()");
+                Log.d(KEY_LOG,"IOException on sendQuery()");
             }
             printWriter.println(QUERY);
             printWriter.flush();
@@ -113,15 +107,12 @@ public class TcpClient implements IConst {
                     }
                 }
 
-            } catch (IOException ex) {
-                Log.d("LOG","IOException on readServer()");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d(KEY_LOG,"IOException on readServer()");
             }
         }
     }
 
-    //
-    public interface OnReadStringQuestionsListener {
-        void action(DataQuestions dataQuestions);
-    }
 
 }

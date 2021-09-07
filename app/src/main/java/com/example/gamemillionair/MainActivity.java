@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements IToast, IConst {
 
-    private ConnectFragment connectFragment;
     private GameFragment gameFragment;
     private InputQuestionsFragment inputQuestionsFragment;
 
@@ -24,7 +23,6 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
     }
 
     private void initFragments() {
-        connectFragment = new ConnectFragment();
         gameFragment = new GameFragment();
         inputQuestionsFragment = new InputQuestionsFragment();
     }
@@ -36,13 +34,6 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
                 .commit();
     }
 
-
-    public void showConnectFragment() {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, connectFragment)
-                .commit();
-    }
 
     public void showGameFragment(ArrayList<String> list) {
         Bundle args = new Bundle();

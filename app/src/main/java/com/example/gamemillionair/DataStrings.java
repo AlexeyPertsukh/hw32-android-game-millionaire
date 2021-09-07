@@ -2,12 +2,12 @@ package com.example.gamemillionair;
 
 import java.util.ArrayList;
 
-public class DataQuestions {
-    private final ArrayList<String> listStrQuestions;
+public class DataStrings {
+    private final ArrayList<String> list;
     private final Exception exception;
 
-    public DataQuestions(ArrayList<String> listStrQuestions, Exception exception) {
-        this.listStrQuestions = listStrQuestions;
+    public DataStrings(ArrayList<String> list, Exception exception) {
+        this.list = list;
         this.exception = exception;
     }
 
@@ -15,8 +15,8 @@ public class DataQuestions {
         return exception != null;
     }
 
-    public ArrayList<String> getListStrQuestions() {
-        return listStrQuestions;
+    public ArrayList<String> getList() {
+        return list;
     }
 
     public String getExceptionMessage() {
