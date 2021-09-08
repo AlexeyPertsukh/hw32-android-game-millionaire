@@ -1,17 +1,14 @@
 package com.example.gamemillionaire;
 
-import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.example.gamemillionair.R;
 import com.example.gamemillionaire.question.Question;
@@ -31,6 +28,7 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
 
     private Button btnServerQuestions;
     private Button btnLocalQuestions;
+    ProgressBar pbConnect;
 
     private TcpClient tcpClient;
     private FileReader fileReader;
@@ -61,6 +59,7 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
     private void initViews(View view) {
         btnLocalQuestions = view.findViewById(R.id.btnLocalQuestions);
         btnServerQuestions = view.findViewById(R.id.btnServerQuestions);
+        pbConnect = view.findViewById(R.id.pbConnect);
     }
 
     private void initListeners() {
@@ -90,11 +89,11 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
         if(fileReader.isExecute() || tcpClient.isExecute()) {
             return;
         }
-
+        pbConnect.setVisibility(View.VISIBLE);
         try {
             tcpClient.connect(socketAddress);
         } catch (Exception ex) {
-            showToast(getContext(), "Не удалось прочитать вопросы с сервера!!!");
+            shortToast(getContext(), "Не удалось прочитать вопросы с сервера!!!");
         }
     }
 
@@ -114,8 +113,9 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
     }
 
     public void onEndReadStringsFromServer(DataStrings dataStrings) {
+        pbConnect.setVisibility(View.INVISIBLE);
         if(dataStrings.isError()) {
-            showToast(getContext(), dataStrings.getExceptionMessage());
+            shortToast(getContext(), dataStrings.getExceptionMessage());
             return;
         }
 
@@ -123,13 +123,13 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
             ArrayList<Question> listQuestion = QuestionFabric.createFromJson(dataStrings.getList());
             goToGame(listQuestion);
         } catch (QuestionFabricException ex) {
-            showToast(getContext(), ex.getMessage());
+            shortToast(getContext(), ex.getMessage());
         }
     }
 
     private void onEndReadStringsFromCsv(DataStrings dataStrings) {
         if(dataStrings.isError()) {
-            showToast(getContext(), dataStrings.getExceptionMessage());
+            shortToast(getContext(), dataStrings.getExceptionMessage());
             return;
         }
 
@@ -138,7 +138,7 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
             listQuestion = QuestionFabric.createFromCsv(dataStrings.getList());
             goToGame(listQuestion);
         } catch (QuestionFabricException ex) {
-            showToast(getContext(), ex.getMessage());
+            shortToast(getContext(), ex.getMessage());
         }
     }
 

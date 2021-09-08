@@ -45,7 +45,6 @@ public class TcpClient implements IConst {
     class ConnectTask extends AsyncTask<InetSocketAddress, Void, DataStrings> {
 
         private Socket socket;
-        private PrintWriter printWriter;
 
         private ArrayList<String> list;
 
@@ -62,12 +61,12 @@ public class TcpClient implements IConst {
             try {
                 socket = new Socket();
                 socket.connect(socketAddress, 5000);
-                if(socket.isConnected()) {
+                if (socket.isConnected()) {
                     sendQuery();
                     readServer();
                 }
             } catch (IOException e) {
-                Log.d("LOG","IOException on doInBackground");
+                Log.d("LOG", "IOException on doInBackground");
                 @SuppressLint("DefaultLocale") String message = String.format(FORMAT_MESSAGE_FAILED_CONNECTION,
                         socketAddress.getHostString(), socketAddress.getPort());
                 exception = new ConnectException(message);
@@ -79,7 +78,7 @@ public class TcpClient implements IConst {
         protected void onPostExecute(DataStrings dataStrings) {
             super.onPostExecute(dataStrings);
             isExecute = false;
-            if(onEndReadStringsListener != null) {
+            if (onEndReadStringsListener != null) {
                 onEndReadStringsListener.action(dataStrings);
             }
         }
@@ -90,22 +89,21 @@ public class TcpClient implements IConst {
         }
 
         private void sendQuery() throws IOException {
-                printWriter = new PrintWriter(socket.getOutputStream());
-                printWriter.println(QUERY);
-                printWriter.flush();
+            PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
+            printWriter.println(QUERY);
+            printWriter.flush();
         }
 
         private void readServer() throws IOException {
             String text;
-
-                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                int i = 0;
-                while ((text = in.readLine()) != null) {
-                    list.add(text);
-                    if(i++ >= 32) {
-                        break;
-                    }
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            int i = 0;
+            while ((text = in.readLine()) != null) {
+                list.add(text);
+                if (i++ >= 32) {
+                    break;
                 }
+            }
         }
     }
 

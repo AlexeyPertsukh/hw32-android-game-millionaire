@@ -76,7 +76,7 @@
         android:layout_height="36sp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:background="@color/light_gray"
+        android:background="@color/white"
         android:text="Cancel"
         android:textColor="@color/gray"
         android:textSize="16sp"
