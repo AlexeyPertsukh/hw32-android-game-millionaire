@@ -31,12 +31,8 @@ public class TcpClient implements IConst {
         this.onEndReadStringsListener = onEndReadStringsListener;
     }
 
-    public void connect(String host, int port) {
-
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(host, port);
-
+    public void connect(InetSocketAddress socketAddress) {
         ConnectTask connectTask = new ConnectTask();
-        InetSocketAddress socketAddress = new InetSocketAddress(host, port);
         connectTask.execute(socketAddress);
     }
 
@@ -93,20 +89,15 @@ public class TcpClient implements IConst {
             super.onProgressUpdate(values);
         }
 
-        private void sendQuery() {
-            try {
+        private void sendQuery() throws IOException {
                 printWriter = new PrintWriter(socket.getOutputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(KEY_LOG,"IOException on sendQuery()");
-            }
-            printWriter.println(QUERY);
-            printWriter.flush();
+                printWriter.println(QUERY);
+                printWriter.flush();
         }
 
-        private void readServer() {
+        private void readServer() throws IOException {
             String text;
-            try {
+
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 int i = 0;
                 while ((text = in.readLine()) != null) {
@@ -115,11 +106,6 @@ public class TcpClient implements IConst {
                         break;
                     }
                 }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d(KEY_LOG,"IOException on readServer()");
-            }
         }
     }
 

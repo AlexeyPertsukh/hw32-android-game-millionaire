@@ -69,6 +69,7 @@ public class FileReader implements IConst {
                 Log.e(KEY_LOG, message);
                 exception = new FileReaderException(message);
             }
+
             return new DataStrings(list, exception);
         }
 

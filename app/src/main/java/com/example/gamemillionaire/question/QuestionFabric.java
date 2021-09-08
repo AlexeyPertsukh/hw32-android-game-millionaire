@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionFabric {
-    private static final String MESSAGE_CSV_CONVERT_FILED = "ошибка преобразования вопросов из формата csv";
-    private static final String MESSAGE_JSON_CONVERT_FILED = "ошибка преобразования вопросов из формата json";
+    private static final String MESSAGE_CSV_CONVERT_FILED = "Ошибка преобразования вопросов из формата csv";
+    private static final String MESSAGE_JSON_CONVERT_FILED = "Ошибка преобразования вопросов из формата json";
 
     private final static String SPLIT_STR = ";";
 
@@ -46,11 +46,11 @@ public class QuestionFabric {
     }
 
     private static ArrayList<Question> createQuestionsFromCsv(List<String> listCsv) {
-        int numWrongAnswers = Question.AMOUNT_ANSWERS - 1;
+        int amountWrongAnswers = Question.AMOUNT_ANSWERS - 1;
 
         String strQuestion;
         String correctAnswer;
-        String[] wrongAnswers = new String[numWrongAnswers];
+        String[] wrongAnswers = new String[amountWrongAnswers];
 
         ArrayList<Question> listQuestion = new ArrayList<>();
         for (String csv : listCsv) {

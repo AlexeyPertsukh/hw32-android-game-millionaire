@@ -11,7 +11,7 @@ public class Question {
     public static final int AMOUNT_ANSWERS = 4;
 
     private static final String MESSAGE_EXCEPTION_JSON_CONVERT = "Invalid json format for created";
-    private static final String FORMAT_MESSAGE_EXCEPTION_FAILED_CREATE  = "Invalid numbers answers (valid values is %d): %s";
+    private static final String FORMAT_MESSAGE_EXCEPTION_WRONG_ANSWERS = "Invalid numbers answers (valid values is %d): %s";
 
     private final String strQuestion;
     private final String correctAnswer;
@@ -35,12 +35,11 @@ public class Question {
 
         validateWrongAnswers(question.getWrongAnswers());
         return question;
-
     }
 
     private static void validateWrongAnswers(int amount) {
         if(amount != AMOUNT_ANSWERS - 1) {
-            String message = String.format(FORMAT_MESSAGE_EXCEPTION_FAILED_CREATE, AMOUNT_ANSWERS - 1, amount);
+            String message = String.format(FORMAT_MESSAGE_EXCEPTION_WRONG_ANSWERS, AMOUNT_ANSWERS - 1, amount);
             throw new QuestionException(message);
         }
     }

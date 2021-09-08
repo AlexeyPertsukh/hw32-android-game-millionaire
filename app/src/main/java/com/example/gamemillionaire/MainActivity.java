@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
                 .commit();
     }
 
-
     public void showGameFragment(ArrayList<Question> listQuestion) {
         Bundle args = new Bundle();
         Game game = new Game(listQuestion);
@@ -48,9 +47,5 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
                 .replace(R.id.fragmentContainer, gameFragment)
                 .commit();
     }
-
-
-
-
 
 }

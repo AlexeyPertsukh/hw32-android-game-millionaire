@@ -28,10 +28,8 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
     private Map<String, TextView> map;
 
-
     public GameFragment() {
     }
-
 
     public static GameFragment newInstance(String param1, String param2) {
         GameFragment fragment = new GameFragment();
@@ -49,7 +47,6 @@ public class GameFragment extends Fragment implements IConst, IToast {
 //            mParam1 = getArguments().getString(ARG_PARAM1);
 //            mParam2 = getArguments().getString(ARG_PARAM2);
 //        }
-
     }
 
     @Override
@@ -91,13 +88,11 @@ public class GameFragment extends Fragment implements IConst, IToast {
         reinitTextViews();
     }
 
-
     private void reinitTextViews() {
         for (TextView tv : tvAnswers) {
             tv.setBackgroundResource(draw_tv_white);
         }
     }
-
 
     public void click(TextView tv) {
         game.sendAnswer((String)tv.getTag());
@@ -132,7 +127,5 @@ public class GameFragment extends Fragment implements IConst, IToast {
             map.put(answers[i], tvAnswers[i]);
         }
     }
-
-
 
 }

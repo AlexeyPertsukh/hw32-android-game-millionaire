@@ -1,7 +1,11 @@
 package com.example.gamemillionaire;
 
+import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -17,6 +21,7 @@ import com.example.gamemillionaire.readers.DataStrings;
 import com.example.gamemillionaire.readers.FileReader;
 import com.example.gamemillionaire.readers.TcpClient;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
 public class InputQuestionsFragment extends Fragment implements IToast, IConst {
@@ -60,33 +65,36 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
 
     private void initListeners() {
         btnLocalQuestions.setOnClickListener(this::loadQuestionsFromCsvFile);
-        btnServerQuestions.setOnClickListener(this::loadQuestionsFromServer);
+        btnServerQuestions.setOnClickListener(this::showDialogConnect);
     }
 
     private void loadQuestionsFromCsvFile(View view) {
-        if(tcpClient.isExecute()) {
+        if(fileReader.isExecute() || tcpClient.isExecute()) {
             return;
         }
 
         fileReader.read(FILE_NAME_CSV_QUESTIONS);
-
     }
 
-    private void loadQuestionsFromServer(View view) {
-        if(fileReader.isExecute()) {
+    private void showDialogConnect(View view) {
+        if(fileReader.isExecute() || tcpClient.isExecute()) {
             return;
         }
-//        String host = etHost.getText().toString();
-//        int port = Integer.parseInt(etPort.getText().toString());
 
-//        tcpClient.connect(host, port);
-//        showToast(getContext(), "!!!");
+        DialogConnect dialogConnect = new DialogConnect(getActivity());
+        dialogConnect.setOnClickConnectListener(this::loadQuestionsFromServer);
+        dialogConnect.show();
+    }
+
+    private void loadQuestionsFromServer(InetSocketAddress socketAddress) {
         try {
-            tcpClient.connect("192.168.0.102", 6789);
+            tcpClient.connect(socketAddress);
         } catch (Exception ex) {
             showToast(getContext(), "Не удалось прочитать вопросы с сервера!!!");
         }
     }
+
+
 
     private void initTcpClient() {
         tcpClient = new TcpClient();
