@@ -87,6 +87,10 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
     }
 
     private void loadQuestionsFromServer(InetSocketAddress socketAddress) {
+        if(fileReader.isExecute() || tcpClient.isExecute()) {
+            return;
+        }
+
         try {
             tcpClient.connect(socketAddress);
         } catch (Exception ex) {
