@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 class DialogConnect extends Dialog implements IToast {
     private static final String MESSAGE_ADDRESS_FAILED = "Неправильный хост или порт сервера";
 
-    private Activity activity;
+    private final Activity activity;
     private EditText etHost;
     private EditText etPort;
     private Button btnConnectOk;

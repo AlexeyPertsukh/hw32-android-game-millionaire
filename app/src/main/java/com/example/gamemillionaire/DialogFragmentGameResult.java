@@ -1,5 +1,6 @@
 package com.example.gamemillionaire;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -29,8 +30,12 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
             stringWordAnswer = "вопроса";
         }
 
-        String message = "Вы правильно ответили на " + game.getNumAnswer() + " " + stringWordAnswer + " " +
-                    "и выиграли " + game.getWin() + " " + MONEY_SIGN;
+        @SuppressLint("DefaultLocale") String message = String.format("Вы правильно ответили на %d %s и выиграли %d %s", game.getNumAnswer(),
+                stringWordAnswer,
+                game.getWin(),
+                MONEY_SIGN
+                );
+
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder
@@ -62,6 +67,7 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
         this.onClickQuitListener = onClickQuitListener;
     }
 
+    //interfaces
     interface OnClickNewGameListener {
         void action();
     }
