@@ -37,10 +37,6 @@ public class GameFragment extends Fragment implements IConst, IToast {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//            mParam1 = getArguments().getString(ARG_PARAM1);
-//            mParam2 = getArguments().getString(ARG_PARAM2);
-//        }
     }
 
     @Override
@@ -55,13 +51,15 @@ public class GameFragment extends Fragment implements IConst, IToast {
             game.setOnSelectAnswerListener(this::showSelectAnswer);
             game.setOnSelectNewQuestionListener(this::showNewQuestion);
             game.setOnReportQuestionResultListener(this::showResult);
-            game.nextQuestion();
+            game.setOnEndGameListener(this::onEndGame);
+            game.start();
         }
 
         tvQuestionBet.setOnClickListener(this::test);
 
         return view;
     }
+
 
     private void test(View view) {
         showDialogResult();
@@ -117,18 +115,11 @@ public class GameFragment extends Fragment implements IConst, IToast {
     }
 
     void showNewQuestion(Question question, int bet) {
-
-        if(game.isEnd()) {
-            longToast(getContext(), "ВСЕ!");
-            showDialogResult();
-            return;
-        }
-
         setAllTvAnswersWhite();
         List<String> allAnswers = question.getShuffledAllAnswers();
 
         tvQuestion.setText(question.getStrQuestion());
-        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d ₽", bet);
+        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d %s", bet, MONEY_SIGN);
         tvQuestionBet.setText(stringBet);
 
         map = new HashMap<>();
@@ -145,16 +136,19 @@ public class GameFragment extends Fragment implements IConst, IToast {
         }
     }
 
-
     private void showDialogResult() {
-
         DialogFragmentGameResult dialog = new DialogFragmentGameResult();
         Bundle args = new Bundle();
         args.putSerializable(KEY_GAME, game);
         dialog.setArguments(args);
+        dialog.setOnClickNewGameListener(()->game.start());
+        dialog.setOnClickQuitListener(()->getActivity().finish());
         dialog.show(getActivity().getSupportFragmentManager(), "custom");
     }
 
+    private void onEndGame() {
+            showDialogResult();
+    }
 
     private void setTextViewWhite(TextView tv) {
         tv.setBackgroundResource(draw_tv_white);

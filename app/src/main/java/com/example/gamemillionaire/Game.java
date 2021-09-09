@@ -12,35 +12,41 @@ import java.util.List;
 public class Game implements Serializable {
     private final static String MESSAGE_NO_QUESTIONS = "Нет вопросов для игры";
     private static final int DELAY_INTRIGUE = 3_000;
-    private static final int DELAY_UNTIL_NEW_QUESTION = 3_000;
+    private static final int DELAY_AFTER_QUESTION_RESULT = 3_000;
 
-    private final ArrayList<Question> actualQuestions;
-    private final ArrayList<Question> oldQuestions;
+    private final ArrayList<Question> allQuestions;
+    private ArrayList<Question> actualQuestions;
     private Question currentQuestion;
     private final Round round;
 
     private OnReportQuestionResultListener onReportResultListener;
     private OnSelectNewQuestionListener onSelectNewQuestionListener;
     private OnSelectAnswerListener onSelectAnswerListener;
+    private OnEndGameListener onEndGameListener;
+
+    private String currentAnswer;
 
     private boolean isAnswerExecute;
 
-    public Game(ArrayList<Question> actualQuestions) {
-        this.actualQuestions = actualQuestions;
-        oldQuestions = new ArrayList<>();
+    public Game(ArrayList<Question> allQuestions) {
+        this.allQuestions = allQuestions;
         round = new Round();
     }
 
-    public void clearQuestions() {
-        actualQuestions.clear();
-        oldQuestions.clear();
+    public void reset() {
+        createActualQuestions();
+        round.reset();
+    }
+
+    private void createActualQuestions() {
+        actualQuestions = new ArrayList<>(allQuestions);
     }
 
     public int size() {
         return actualQuestions.size();
     }
 
-    public int getStep() {
+    public int getNumAnswer() {
         return round.getStep();
     }
 
@@ -48,27 +54,38 @@ public class Game implements Serializable {
         return round.getWin();
     }
 
-    public void nextQuestion(){
+    public void start() {
+        reset();
+        nextQuestion();
+    }
+
+
+    private void wrongAnswer() {
+            if(onEndGameListener != null) {
+                onEndGameListener.onEndGame();
+            }
+    }
+
+    private void nextQuestion(){
         isAnswerExecute = false;
         if(actualQuestions.size() == 0) {
             throw new GameException(MESSAGE_NO_QUESTIONS);
         }
 
+        round.inc();
         int bet;
         if(isEnd()) {
-            currentQuestion = new Question("","","","","");
-            bet = 0;
+            if(onEndGameListener != null) {
+                onEndGameListener.onEndGame();
+            }
 
         } else {
             int num = random(actualQuestions.size());
             currentQuestion = actualQuestions.remove(num);
-            oldQuestions.add(currentQuestion);
-            bet = round.getBet();
-            round.inc();
-        }
+            if(onSelectNewQuestionListener != null) {
+                onSelectNewQuestionListener.onSelectNewQuestion(currentQuestion, round.getBet());
+            }
 
-        if(onSelectNewQuestionListener != null) {
-            onSelectNewQuestionListener.onSelectNewQuestion(currentQuestion, bet);
         }
     }
 
@@ -84,23 +101,29 @@ public class Game implements Serializable {
     }
 
     public void sendAnswer(String selectedAnswer) {
-        if(isAnswerExecute) {
+        if(isAnswerExecute || isEnd()) {
             return;
         }
         isAnswerExecute = true;
+        currentAnswer = selectedAnswer;
         onSelectAnswerListener.onSelectAnswer(selectedAnswer);
         Handler handler = new Handler();
         handler.postDelayed(() -> {
             if(onReportResultListener != null) {
                 onReportResultListener.onReportQuestionResult(selectedAnswer, currentQuestion.getCorrectAnswer());
             }
-                pauseUntilNewQuestion();
+                pauseAfterQuestionResult();
         }, DELAY_INTRIGUE);
     }
 
-    private void pauseUntilNewQuestion() {
+    private void pauseAfterQuestionResult() {
         Handler handler = new Handler();
-        handler.postDelayed(this::nextQuestion, DELAY_UNTIL_NEW_QUESTION);
+        if(checkCorrectAnswer(currentAnswer)) {
+            handler.postDelayed(this::nextQuestion, DELAY_AFTER_QUESTION_RESULT);
+        } else {
+            handler.postDelayed(this::wrongAnswer, DELAY_AFTER_QUESTION_RESULT);
+        }
+
     }
 
     public boolean isEnd() {
@@ -119,17 +142,20 @@ public class Game implements Serializable {
         this.onSelectNewQuestionListener = onSelectNewQuestionListener;
     }
 
+    public void setOnEndGameListener(OnEndGameListener onEndGameListener) {
+        this.onEndGameListener = onEndGameListener;
+    }
+
     int random(int max) {
         return (int) (Math.random() * max);
     }
 
     //РАУНД
     private static class Round {
-//        private final int[] BETS = {0, 100, 200, 300, 500, 1000,
-//                2_000, 4_000, 8_000, 16_000, 32_000,
-//                64_000, 125_000, 255_000, 500_000, 1000_000};
+        private final int[] BETS = {100, 200, 300, 500, 1000,
+                2_000, 4_000, 8_000, 16_000, 32_000,
+                64_000, 125_000, 255_000, 500_000, 1000_000};
 
-        private final int[] BETS = {100, 200, 300, 0};  //последний ноль - костыль
         private final int[] IRREPARABLE_AMOUNTS = {1000, 32_000, 1000_000};
         private int step;
 
@@ -137,15 +163,17 @@ public class Game implements Serializable {
         }
 
         public void reset(){
-            step = 0;
+            step = -1;
         }
 
         public void inc() {
-            step++;
+            if(!isEnd()) {
+                step++;
+            }
         }
 
         public boolean isEnd(){
-            return step == (BETS.length);
+            return step >= (BETS.length);
         }
 
         public int getBet() {
@@ -156,16 +184,22 @@ public class Game implements Serializable {
             return step;
         }
 
-        public int  getWin() {
+        public int getWin() {
             int win = 0;
-            if(step > 1) {
-                for (int i = 0; i < IRREPARABLE_AMOUNTS.length; i++) {
-                    int bet = BETS[step];
-                    if(bet >= IRREPARABLE_AMOUNTS[i]) {
-                        win = IRREPARABLE_AMOUNTS[i];
-                    }
+
+            int numAnsweredQuestion = step;
+
+            if(step >= BETS.length) {
+                numAnsweredQuestion = BETS.length - 1;
+            }
+
+            for (int i = 0; i < IRREPARABLE_AMOUNTS.length; i++) {
+                int bet = BETS[numAnsweredQuestion];
+                if (bet >= IRREPARABLE_AMOUNTS[i]) {
+                    win = IRREPARABLE_AMOUNTS[i];
                 }
             }
+
             return win;
         }
     }
@@ -176,13 +210,16 @@ public class Game implements Serializable {
         void onReportQuestionResult(String selectedAnswer, String correctAnswer);
     }
 
-    interface OnSelectNewQuestionListener {
-        void onSelectNewQuestion(Question question, int bet);
-    }
-
     interface OnSelectAnswerListener {
         void onSelectAnswer(String selectedAnswer);
     }
 
+    interface OnSelectNewQuestionListener {
+        void onSelectNewQuestion(Question question, int bet);
+    }
+
+    interface OnEndGameListener {
+        void onEndGame();
+    }
 
 }
