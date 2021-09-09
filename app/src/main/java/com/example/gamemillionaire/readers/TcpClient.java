@@ -15,7 +15,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class TcpClient implements IConst {
-    private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "не удалось получить данные с сервера %s:%d ";
+    private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "Не удалось получить данные с сервера %s : %d ";
     private final static String QUERY = "select *";
     private final static String KEY_LOG = "TcpClient";
 

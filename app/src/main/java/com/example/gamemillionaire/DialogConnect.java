@@ -7,11 +7,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-
 import com.example.gamemillionair.R;
 
 import java.net.InetSocketAddress;
-
 
 class DialogConnect extends Dialog implements IToast {
     private static final String MESSAGE_ADDRESS_FAILED = "Неправильный хост или порт сервера";
@@ -31,15 +29,15 @@ class DialogConnect extends Dialog implements IToast {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_connect_layout);
+        setContentView(R.layout.dialog_connect);
 
         etHost = findViewById(R.id.etHost);
         etPort = findViewById(R.id.etPort);
 
-        btnConnectCancel = findViewById(R.id.btnConnectCancel);
+        btnConnectCancel = findViewById(R.id.btnQuit);
         btnConnectCancel.setOnClickListener(this::clickCancel);
 
-        btnConnectOk = findViewById(R.id.btnConnectOk);
+        btnConnectOk = findViewById(R.id.btnNewGame);
         btnConnectOk.setOnClickListener(this::clickConnect);
     }
 

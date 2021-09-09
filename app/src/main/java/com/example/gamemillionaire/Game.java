@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Game implements Serializable {
-    private final static String MESSAGE_NO_QUESTIONS = "нет вопросов для игры";
+    private final static String MESSAGE_NO_QUESTIONS = "Нет вопросов для игры";
     private static final int DELAY_INTRIGUE = 3_000;
     private static final int DELAY_UNTIL_NEW_QUESTION = 3_000;
 
@@ -18,7 +18,6 @@ public class Game implements Serializable {
     private final ArrayList<Question> oldQuestions;
     private Question currentQuestion;
     private final Round round;
-    private List<String> currentAnswers;
 
     private OnReportQuestionResultListener onReportResultListener;
     private OnSelectNewQuestionListener onSelectNewQuestionListener;
@@ -41,26 +40,35 @@ public class Game implements Serializable {
         return actualQuestions.size();
     }
 
+    public int getStep() {
+        return round.getStep();
+    }
+
+    public int getWin() {
+        return round.getWin();
+    }
+
     public void nextQuestion(){
         isAnswerExecute = false;
         if(actualQuestions.size() == 0) {
             throw new GameException(MESSAGE_NO_QUESTIONS);
         }
-        int num = random(actualQuestions.size());
-        currentQuestion = actualQuestions.remove(num);
-        oldQuestions.add(currentQuestion);
 
-        currentAnswers = getShuffledAllAnswers(currentQuestion);
-        round.inc();
+        int bet;
+        if(isEnd()) {
+            currentQuestion = new Question("","","","","");
+            bet = 0;
+
+        } else {
+            int num = random(actualQuestions.size());
+            currentQuestion = actualQuestions.remove(num);
+            oldQuestions.add(currentQuestion);
+            bet = round.getBet();
+            round.inc();
+        }
+
         if(onSelectNewQuestionListener != null) {
-//            String[] answers = (String[]) currentAnswers.toArray();
-//            onShowNewQuestionListener.onShowNewQuestion(currentQuestion.getStrQuestion(), answers);
-            onSelectNewQuestionListener.onSelectNewQuestion(currentQuestion.getStrQuestion(),
-                    currentAnswers.get(0),
-                    currentAnswers.get(1),
-                    currentAnswers.get(2),
-                    currentAnswers.get(3)
-                    );
+            onSelectNewQuestionListener.onSelectNewQuestion(currentQuestion, bet);
         }
     }
 
@@ -86,13 +94,17 @@ public class Game implements Serializable {
             if(onReportResultListener != null) {
                 onReportResultListener.onReportQuestionResult(selectedAnswer, currentQuestion.getCorrectAnswer());
             }
-            pauseUntilNewQuestion();
+                pauseUntilNewQuestion();
         }, DELAY_INTRIGUE);
     }
 
     private void pauseUntilNewQuestion() {
         Handler handler = new Handler();
         handler.postDelayed(this::nextQuestion, DELAY_UNTIL_NEW_QUESTION);
+    }
+
+    public boolean isEnd() {
+        return round.isEnd();
     }
 
     void setOnSelectAnswerListener(OnSelectAnswerListener onSelectAnswerListener) {
@@ -107,18 +119,18 @@ public class Game implements Serializable {
         this.onSelectNewQuestionListener = onSelectNewQuestionListener;
     }
 
-
-
-
     int random(int max) {
         return (int) (Math.random() * max);
     }
 
     //РАУНД
     private static class Round {
-        private final int[] BETS = {0, 100, 200, 300, 500, 1000,
-                2_000, 4_000, 8_000, 16_000, 32_000,
-                64_000, 125_000, 255_000, 500_000, 1000_000};
+//        private final int[] BETS = {0, 100, 200, 300, 500, 1000,
+//                2_000, 4_000, 8_000, 16_000, 32_000,
+//                64_000, 125_000, 255_000, 500_000, 1000_000};
+
+        private final int[] BETS = {100, 200, 300, 0};  //последний ноль - костыль
+        private final int[] IRREPARABLE_AMOUNTS = {1000, 32_000, 1000_000};
         private int step;
 
         public Round() {
@@ -145,7 +157,16 @@ public class Game implements Serializable {
         }
 
         public int  getWin() {
-            return 0;
+            int win = 0;
+            if(step > 1) {
+                for (int i = 0; i < IRREPARABLE_AMOUNTS.length; i++) {
+                    int bet = BETS[step];
+                    if(bet >= IRREPARABLE_AMOUNTS[i]) {
+                        win = IRREPARABLE_AMOUNTS[i];
+                    }
+                }
+            }
+            return win;
         }
     }
 
@@ -156,7 +177,7 @@ public class Game implements Serializable {
     }
 
     interface OnSelectNewQuestionListener {
-        void onSelectNewQuestion(String question, String... answers);
+        void onSelectNewQuestion(Question question, int bet);
     }
 
     interface OnSelectAnswerListener {

@@ -23,12 +23,9 @@ import java.util.ArrayList;
 
 public class InputQuestionsFragment extends Fragment implements IToast, IConst {
 
-//    private static final String MESSAGE_CSV_CONVERT_FILED = "ошибка преобразования вопроса из формата csv";
-//    private static final String MESSAGE_JSON_CONVERT_FILED = "ошибка преобразования вопроса из формата json";
-
     private Button btnServerQuestions;
     private Button btnLocalQuestions;
-    ProgressBar pbConnect;
+    private ProgressBar pbConnect;
 
     private TcpClient tcpClient;
     private FileReader fileReader;
@@ -93,11 +90,9 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
         try {
             tcpClient.connect(socketAddress);
         } catch (Exception ex) {
-            shortToast(getContext(), "Не удалось прочитать вопросы с сервера!!!");
+            longToast(getContext(), "Не удалось прочитать вопросы с сервера");
         }
     }
-
-
 
     private void initTcpClient() {
         tcpClient = new TcpClient();

@@ -1,5 +1,6 @@
 package com.example.gamemillionaire;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,10 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.gamemillionair.R;
+import com.example.gamemillionaire.question.Question;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.gamemillionair.R.drawable.*;
@@ -18,26 +21,17 @@ import static com.example.gamemillionair.R.drawable.*;
 
 public class GameFragment extends Fragment implements IConst, IToast {
 
-    private static final int DELAY_INTRIGUE = 3_000;
-    private static final int DELAY_RESULT = 3_000;
+    private static final String[] LETTERS = {"A", "B", "C", "D"};
 
     private Game game;
 
     private TextView tvQuestion;
     private TextView[] tvAnswers;
+    private TextView tvQuestionBet;
 
     private Map<String, TextView> map;
 
     public GameFragment() {
-    }
-
-    public static GameFragment newInstance(String param1, String param2) {
-        GameFragment fragment = new GameFragment();
-        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -63,7 +57,14 @@ public class GameFragment extends Fragment implements IConst, IToast {
             game.setOnReportQuestionResultListener(this::showResult);
             game.nextQuestion();
         }
+
+        tvQuestionBet.setOnClickListener(this::test);
+
         return view;
+    }
+
+    private void test(View view) {
+        showDialogResult();
     }
 
     private void initListeners() {
@@ -80,52 +81,95 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
         tvAnswers = new TextView[4];
         tvQuestion = view.findViewById(R.id.tvQuestion);
+        tvQuestionBet = view.findViewById(R.id.tvQuestionBet);
         tvAnswers[0] = view.findViewById(R.id.tvAnswer1);
         tvAnswers[1] = view.findViewById(R.id.tvAnswer2);
         tvAnswers[2] = view.findViewById(R.id.tvAnswer3);
         tvAnswers[3] = view.findViewById(R.id.tvAnswer4);
 
-        reinitTextViews();
+        setAllTvAnswersWhite();
     }
 
-    private void reinitTextViews() {
+    private void setAllTvAnswersWhite() {
         for (TextView tv : tvAnswers) {
-            tv.setBackgroundResource(draw_tv_white);
+            setTextViewWhite(tv);
         }
     }
 
     public void click(TextView tv) {
-        game.sendAnswer((String)tv.getTag());
+        String answer = (String)tv.getTag();
+        game.sendAnswer(answer);
     }
 
     private void showSelectAnswer(String selectedAnswer) {
         TextView tv = map.get(selectedAnswer);
-        tv.setBackgroundResource(draw_tv_orange);
+        setTextViewOrange(tv);
     }
 
     void showResult(String selectedAnswer, String correctAnswer) {
         TextView tvCorrectAnswer = map.get(correctAnswer);
         TextView tvSelectedAnswer = map.get(selectedAnswer);
 
-        tvCorrectAnswer.setBackgroundResource(draw_tv_green);
+        setTextViewGreen(tvCorrectAnswer);
         if (tvSelectedAnswer != tvCorrectAnswer) {
-            tvSelectedAnswer.setBackgroundResource(draw_tv_red);
+            setTextViewRed(tvSelectedAnswer);
         }
     }
 
-    void showNewQuestion(String question, String... answers) {
-        reinitTextViews();
+    void showNewQuestion(Question question, int bet) {
 
-        tvQuestion.setText(question);
-
-        String[] letters = {"A", "B", "C", "D"};
-        map = new HashMap<>();
-        for (int i = 0; i < tvAnswers.length; i++) {
-            String text = String.format("%s. %s", letters[i], answers[i]);
-            tvAnswers[i].setText(text);
-            tvAnswers[i].setTag(answers[i]);
-            map.put(answers[i], tvAnswers[i]);
+        if(game.isEnd()) {
+            longToast(getContext(), "ВСЕ!");
+            showDialogResult();
+            return;
         }
+
+        setAllTvAnswersWhite();
+        List<String> allAnswers = question.getShuffledAllAnswers();
+
+        tvQuestion.setText(question.getStrQuestion());
+        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d ₽", bet);
+        tvQuestionBet.setText(stringBet);
+
+        map = new HashMap<>();
+        for (int i = 0; i < allAnswers.size(); i++) {
+            TextView tvAnswer = tvAnswers[i];
+            String answer = allAnswers.get(i);
+            String letter = LETTERS[i];
+
+            String letterAndAnswer = String.format("%s. %s", letter, answer);
+
+            tvAnswer.setText(letterAndAnswer);
+            tvAnswer.setTag(answer);
+            map.put(answer, tvAnswer);
+        }
+    }
+
+
+    private void showDialogResult() {
+
+        DialogFragmentGameResult dialog = new DialogFragmentGameResult();
+        Bundle args = new Bundle();
+        args.putSerializable(KEY_GAME, game);
+        dialog.setArguments(args);
+        dialog.show(getActivity().getSupportFragmentManager(), "custom");
+    }
+
+
+    private void setTextViewWhite(TextView tv) {
+        tv.setBackgroundResource(draw_tv_white);
+    }
+
+    private void setTextViewGreen(TextView tv) {
+        tv.setBackgroundResource(draw_tv_green);
+    }
+
+    private void setTextViewRed(TextView tv) {
+        tv.setBackgroundResource(draw_tv_red);
+    }
+
+    private void setTextViewOrange(TextView tv) {
+        tv.setBackgroundResource(draw_tv_orange);
     }
 
 }

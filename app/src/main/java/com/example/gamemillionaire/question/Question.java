@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Question {
@@ -51,6 +52,14 @@ public class Question {
     private static void validateWrongAnswers(List<String> listWrongAnswers) {
         validateWrongAnswers(listWrongAnswers.size());
     }
+
+    public List<String> getShuffledAllAnswers() {
+        List<String> allAnswers = new ArrayList<>(wrongAnswers);
+        allAnswers.add(correctAnswer);
+        Collections.shuffle(allAnswers);
+        return allAnswers;
+    }
+
 
     public String getStrQuestion() {
         return strQuestion;

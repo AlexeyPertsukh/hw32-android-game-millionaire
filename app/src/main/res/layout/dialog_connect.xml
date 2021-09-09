@@ -58,7 +58,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnConnectOk"
+        android:id="@+id/btnNewGame"
         android:layout_width="100sp"
         android:layout_height="36sp"
         android:layout_marginStart="2dp"
@@ -71,7 +71,7 @@
         app:layout_constraintTop_toBottomOf="@+id/etPort" />
 
     <Button
-        android:id="@+id/btnConnectCancel"
+        android:id="@+id/btnQuit"
         android:layout_width="100sp"
         android:layout_height="36sp"
         android:layout_marginStart="20dp"
@@ -80,6 +80,6 @@
         android:text="Cancel"
         android:textColor="@color/gray"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/btnConnectOk"
+        app:layout_constraintStart_toEndOf="@+id/btnNewGame"
         app:layout_constraintTop_toBottomOf="@+id/etPort" />
 </androidx.constraintlayout.widget.ConstraintLayout>
