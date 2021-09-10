@@ -187,14 +187,14 @@ public class Game implements Serializable {
         public int getWin() {
             int win = 0;
 
-            int numAnsweredQuestion = step;
+            int numQuestion = step;
 
             if(step >= BETS.length) {
-                numAnsweredQuestion = BETS.length - 1;
+                numQuestion = BETS.length - 1;
             }
 
             for (int i = 0; i < IRREPARABLE_AMOUNTS.length; i++) {
-                int bet = BETS[numAnsweredQuestion];
+                int bet = BETS[numQuestion];
                 if (bet >= IRREPARABLE_AMOUNTS[i]) {
                     win = IRREPARABLE_AMOUNTS[i];
                 }

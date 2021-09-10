@@ -1,6 +1,8 @@
 package com.example.gamemillionaire;
 
 import android.annotation.SuppressLint;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.example.gamemillionair.R;
 import com.example.gamemillionaire.question.Question;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +25,8 @@ import static com.example.gamemillionair.R.drawable.*;
 public class GameFragment extends Fragment implements IConst, IToast {
 
     private static final String[] LETTERS = {"A", "B", "C", "D"};
+    private static final int CODE_SOUND_WRONG_ANSWER = 0;
+    private static final int CODE_SOUND_OK_ANSWER = 1;
 
     private Game game;
 
@@ -30,6 +35,10 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private TextView tvQuestionBet;
 
     private Map<String, TextView> map;
+
+    private SoundPool soundPool;
+    private int idSoundWrongAnswer;
+    private int idSoundOkAnswer;
 
     public GameFragment() {
     }
@@ -45,6 +54,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
         initViews(view);
         initListeners();
+        initSound();
 
         if(getArguments() != null) {
             game = (Game) getArguments().getSerializable(KEY_GAME);
@@ -55,15 +65,10 @@ public class GameFragment extends Fragment implements IConst, IToast {
             game.start();
         }
 
-        tvQuestionBet.setOnClickListener(this::test);
-
+        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         return view;
     }
 
-
-    private void test(View view) {
-        showDialogResult();
-    }
 
     private void initListeners() {
         for (TextView tvAnswer : tvAnswers) {
@@ -86,6 +91,13 @@ public class GameFragment extends Fragment implements IConst, IToast {
         tvAnswers[3] = view.findViewById(R.id.tvAnswer4);
 
         setAllTvAnswersWhite();
+    }
+
+    private void initSound() {
+        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
+        idSoundWrongAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_wrong,1);
+        idSoundOkAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_ok,1);
+
     }
 
     private void setAllTvAnswersWhite() {
@@ -111,6 +123,9 @@ public class GameFragment extends Fragment implements IConst, IToast {
         setTextViewGreen(tvCorrectAnswer);
         if (tvSelectedAnswer != tvCorrectAnswer) {
             setTextViewRed(tvSelectedAnswer);
+            sound(CODE_SOUND_WRONG_ANSWER);
+        } else {
+            sound(CODE_SOUND_OK_ANSWER);
         }
     }
 
@@ -148,6 +163,15 @@ public class GameFragment extends Fragment implements IConst, IToast {
 
     private void onEndGame() {
             showDialogResult();
+    }
+
+    private void sound(int soundCode) {
+        if(soundCode == CODE_SOUND_WRONG_ANSWER) {
+            soundPool.play(idSoundWrongAnswer, 1, 1, 0, 0, 1);
+        } else if(soundCode == CODE_SOUND_OK_ANSWER) {
+            soundPool.play(idSoundOkAnswer, 1, 1, 0, 0, 1);
+        }
+
     }
 
     private void setTextViewWhite(TextView tv) {
