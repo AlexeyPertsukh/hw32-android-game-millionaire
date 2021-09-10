@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import com.example.gamemillionair.R;
 import com.example.gamemillionaire.question.Question;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +24,10 @@ import static com.example.gamemillionair.R.drawable.*;
 public class GameFragment extends Fragment implements IConst, IToast {
 
     private static final String[] LETTERS = {"A", "B", "C", "D"};
-    private static final int CODE_SOUND_WRONG_ANSWER = 0;
-    private static final int CODE_SOUND_OK_ANSWER = 1;
+    private static final int CODE_SOUND_SELECT_ANSWER = 0;
+    private static final int CODE_SOUND_WRONG_ANSWER = 1;
+    private static final int CODE_SOUND_OK_ANSWER = 2;
+
 
     private Game game;
 
@@ -37,6 +38,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private Map<String, TextView> map;
 
     private SoundPool soundPool;
+    private int idSoundSelectAnswer;
     private int idSoundWrongAnswer;
     private int idSoundOkAnswer;
 
@@ -65,7 +67,6 @@ public class GameFragment extends Fragment implements IConst, IToast {
             game.start();
         }
 
-        soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 100);
         return view;
     }
 
@@ -97,7 +98,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
         soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
         idSoundWrongAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_wrong,1);
         idSoundOkAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_ok,1);
-
+        idSoundSelectAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.click01,1);
     }
 
     private void setAllTvAnswersWhite() {
@@ -114,6 +115,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private void showSelectAnswer(String selectedAnswer) {
         TextView tv = map.get(selectedAnswer);
         setTextViewOrange(tv);
+        sound(CODE_SOUND_SELECT_ANSWER);
     }
 
     void showResult(String selectedAnswer, String correctAnswer) {
@@ -170,6 +172,8 @@ public class GameFragment extends Fragment implements IConst, IToast {
             soundPool.play(idSoundWrongAnswer, 1, 1, 0, 0, 1);
         } else if(soundCode == CODE_SOUND_OK_ANSWER) {
             soundPool.play(idSoundOkAnswer, 1, 1, 0, 0, 1);
+        } else if(soundCode == CODE_SOUND_SELECT_ANSWER) {
+            soundPool.play(idSoundSelectAnswer, 1, 1, 0, 0, 1);
         }
 
     }
