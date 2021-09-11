@@ -205,19 +205,22 @@ public class Game implements Serializable {
     }
 
     //Слушатели
-
+    @FunctionalInterface
     interface OnReportQuestionResultListener {
         void onReportQuestionResult(String selectedAnswer, String correctAnswer);
     }
 
+    @FunctionalInterface
     interface OnSelectAnswerListener {
         void onSelectAnswer(String selectedAnswer);
     }
 
+    @FunctionalInterface
     interface OnSelectNewQuestionListener {
         void onSelectNewQuestion(Question question, int bet);
     }
 
+    @FunctionalInterface
     interface OnEndGameListener {
         void onEndGame();
     }

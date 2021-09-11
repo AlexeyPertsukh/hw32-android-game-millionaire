@@ -88,7 +88,7 @@ public class InputQuestionsFragment extends Fragment implements IToast, IConst {
         }
         pbConnect.setVisibility(View.VISIBLE);
         try {
-            tcpClient.connect(socketAddress);
+            tcpClient.read(socketAddress);
         } catch (Exception ex) {
             longToast(getContext(), "Не удалось прочитать вопросы с сервера");
         }

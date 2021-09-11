@@ -26,8 +26,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private static final String[] LETTERS = {"A", "B", "C", "D"};
     private static final int CODE_SOUND_SELECT_ANSWER = 0;
     private static final int CODE_SOUND_WRONG_ANSWER = 1;
-    private static final int CODE_SOUND_OK_ANSWER = 2;
-
+    private static final int CODE_SOUND_CORRECT_ANSWER = 2;
 
     private Game game;
 
@@ -40,7 +39,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private SoundPool soundPool;
     private int idSoundSelectAnswer;
     private int idSoundWrongAnswer;
-    private int idSoundOkAnswer;
+    private int idSoundCorrectAnswer;
 
     public GameFragment() {
     }
@@ -97,7 +96,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private void initSound() {
         soundPool = new SoundPool(4, AudioManager.STREAM_MUSIC, 0);
         idSoundWrongAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_wrong,1);
-        idSoundOkAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_ok,1);
+        idSoundCorrectAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.answer_ok,1);
         idSoundSelectAnswer = soundPool.load(getActivity().getApplicationContext(), R.raw.click01,1);
     }
 
@@ -127,7 +126,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
             setTextViewRed(tvSelectedAnswer);
             sound(CODE_SOUND_WRONG_ANSWER);
         } else {
-            sound(CODE_SOUND_OK_ANSWER);
+            sound(CODE_SOUND_CORRECT_ANSWER);
         }
     }
 
@@ -168,12 +167,14 @@ public class GameFragment extends Fragment implements IConst, IToast {
     }
 
     private void sound(int soundCode) {
-        if(soundCode == CODE_SOUND_WRONG_ANSWER) {
-            soundPool.play(idSoundWrongAnswer, 1, 1, 0, 0, 1);
-        } else if(soundCode == CODE_SOUND_OK_ANSWER) {
-            soundPool.play(idSoundOkAnswer, 1, 1, 0, 0, 1);
-        } else if(soundCode == CODE_SOUND_SELECT_ANSWER) {
+        if(soundCode == CODE_SOUND_SELECT_ANSWER) {
             soundPool.play(idSoundSelectAnswer, 1, 1, 0, 0, 1);
+
+        } else if(soundCode == CODE_SOUND_WRONG_ANSWER) {
+            soundPool.play(idSoundWrongAnswer, 1, 1, 0, 0, 1);
+
+        } else if(soundCode == CODE_SOUND_CORRECT_ANSWER) {
+            soundPool.play(idSoundCorrectAnswer, 1, 1, 0, 0, 1);
         }
 
     }

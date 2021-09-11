@@ -17,7 +17,6 @@ import java.util.ArrayList;
 public class TcpClient implements IConst {
     private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "Не удалось получить данные с сервера %s : %d ";
     private final static String QUERY = "select *";
-    private final static String KEY_LOG = "TcpClient";
 
     private boolean isExecute;
 
@@ -31,7 +30,7 @@ public class TcpClient implements IConst {
         this.onEndReadStringsListener = onEndReadStringsListener;
     }
 
-    public void connect(InetSocketAddress socketAddress) {
+    public void read(InetSocketAddress socketAddress) {
         ConnectTask connectTask = new ConnectTask();
         connectTask.execute(socketAddress);
     }
