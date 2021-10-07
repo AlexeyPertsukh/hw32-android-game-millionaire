@@ -1,4 +1,4 @@
-package com.example.gamemillionaire.readers;
+package com.example.gamemillionaire.model_readers;
 
 import java.util.ArrayList;
 

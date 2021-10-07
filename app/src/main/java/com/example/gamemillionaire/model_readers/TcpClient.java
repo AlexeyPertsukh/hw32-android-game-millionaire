@@ -1,10 +1,10 @@
-package com.example.gamemillionaire.readers;
+package com.example.gamemillionaire.model_readers;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.gamemillionaire.IConst;
+import com.example.gamemillionaire.constants.IConst;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -71,15 +71,6 @@ public class TcpClient implements IConst {
                 exception = new ConnectException(message);
             }
             return new DataStrings(list, exception);
-        }
-
-        @Override
-        protected void onPostExecute(DataStrings dataStrings) {
-            super.onPostExecute(dataStrings);
-            isExecute = false;
-            if (onEndReadStringsListener != null) {
-                onEndReadStringsListener.action(dataStrings);
-            }
         }
 
         @Override

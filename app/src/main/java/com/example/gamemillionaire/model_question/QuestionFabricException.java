@@ -1,4 +1,4 @@
-package com.example.gamemillionaire.question;
+package com.example.gamemillionaire.model_question;
 
 public class QuestionFabricException extends RuntimeException {
     public QuestionFabricException(String message) {

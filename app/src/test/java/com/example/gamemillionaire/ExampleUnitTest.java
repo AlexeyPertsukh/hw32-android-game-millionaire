@@ -1,9 +1,9 @@
 package com.example.gamemillionaire;
 
-import com.example.gamemillionaire.question.Question;
-import com.example.gamemillionaire.question.QuestionException;
-import com.example.gamemillionaire.question.QuestionFabric;
-import com.example.gamemillionaire.question.QuestionFabricException;
+import com.example.gamemillionaire.model_question.Question;
+import com.example.gamemillionaire.model_question.QuestionException;
+import com.example.gamemillionaire.model_question.QuestionFabric;
+import com.example.gamemillionaire.model_question.QuestionFabricException;
 
 import org.junit.Test;
 

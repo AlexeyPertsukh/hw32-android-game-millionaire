@@ -1,11 +1,11 @@
-package com.example.gamemillionaire.readers;
+package com.example.gamemillionaire.model_readers;
 
 import android.annotation.SuppressLint;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.gamemillionaire.IConst;
+import com.example.gamemillionaire.constants.IConst;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,8 +38,6 @@ public class FileReader implements IConst {
     public boolean isExecute() {
         return isExecute;
     }
-
-
 
     //
     @SuppressLint("StaticFieldLeak")

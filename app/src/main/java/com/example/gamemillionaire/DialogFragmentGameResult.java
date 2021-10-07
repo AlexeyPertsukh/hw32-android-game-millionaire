@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import android.app.AlertDialog;
-import android.widget.Toast;
 
-import com.example.gamemillionair.R;
+import com.example.gamemillionaire.constants.IConst;
+import com.example.gamemillionaire.model_game.Game;
 
 public class DialogFragmentGameResult extends DialogFragment implements IConst {
 

@@ -1,4 +1,4 @@
-package com.example.gamemillionaire;
+package com.example.gamemillionaire.constants;
 
 public interface IConst {
     String host = "192.168.0.100";

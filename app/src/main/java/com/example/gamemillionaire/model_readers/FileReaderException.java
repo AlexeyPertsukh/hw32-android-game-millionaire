@@ -1,4 +1,4 @@
-package com.example.gamemillionaire.readers;
+package com.example.gamemillionaire.model_readers;
 
 public class FileReaderException extends RuntimeException {
     public FileReaderException(String message) {

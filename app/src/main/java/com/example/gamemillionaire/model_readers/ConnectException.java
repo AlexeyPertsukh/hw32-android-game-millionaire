@@ -1,4 +1,4 @@
-package com.example.gamemillionaire.readers;
+package com.example.gamemillionaire.model_readers;
 
 public class ConnectException extends RuntimeException {
     public ConnectException(String message) {

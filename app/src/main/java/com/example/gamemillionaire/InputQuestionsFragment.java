@@ -11,12 +11,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.example.gamemillionair.R;
-import com.example.gamemillionaire.question.Question;
-import com.example.gamemillionaire.question.QuestionFabric;
-import com.example.gamemillionaire.question.QuestionFabricException;
-import com.example.gamemillionaire.readers.DataStrings;
-import com.example.gamemillionaire.readers.FileReader;
-import com.example.gamemillionaire.readers.TcpClient;
+import com.example.gamemillionaire.constants.IConst;
+import com.example.gamemillionaire.model_question.Question;
+import com.example.gamemillionaire.model_question.QuestionFabric;
+import com.example.gamemillionaire.model_question.QuestionFabricException;
+import com.example.gamemillionaire.model_readers.DataStrings;
+import com.example.gamemillionaire.model_readers.FileReader;
+import com.example.gamemillionaire.model_readers.TcpClient;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

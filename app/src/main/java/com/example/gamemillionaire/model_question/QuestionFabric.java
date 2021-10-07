@@ -1,4 +1,4 @@
-package com.example.gamemillionaire.question;
+package com.example.gamemillionaire.model_question;
 
 import java.util.ArrayList;
 import java.util.List;

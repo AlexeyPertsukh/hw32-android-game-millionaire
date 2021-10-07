@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.gamemillionair.R;
-import com.example.gamemillionaire.question.Question;
+import com.example.gamemillionaire.constants.IConst;
+import com.example.gamemillionaire.model_game.Game;
+import com.example.gamemillionaire.model_question.Question;
 
 import java.util.ArrayList;
 
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
 
     public void showGameFragment(ArrayList<Question> listQuestion) {
         Bundle args = new Bundle();
-        Game game = new Game(listQuestion);
+        Game game = new Game(listQuestion, Game.ENABLE_PAUSE);
 
         args.putSerializable(KEY_GAME, game);
 

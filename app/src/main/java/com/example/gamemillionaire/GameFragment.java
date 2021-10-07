@@ -12,7 +12,9 @@ import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 
 import com.example.gamemillionair.R;
-import com.example.gamemillionaire.question.Question;
+import com.example.gamemillionaire.constants.IConst;
+import com.example.gamemillionaire.model_game.*;
+import com.example.gamemillionaire.model_question.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +25,6 @@ import static com.example.gamemillionair.R.drawable.*;
 
 public class GameFragment extends Fragment implements IConst, IToast {
 
-    private static final String[] LETTERS = {"A", "B", "C", "D"};
     private static final int CODE_SOUND_SELECT_ANSWER = 0;
     private static final int CODE_SOUND_WRONG_ANSWER = 1;
     private static final int CODE_SOUND_CORRECT_ANSWER = 2;
@@ -139,13 +140,13 @@ public class GameFragment extends Fragment implements IConst, IToast {
         tvQuestionBet.setText(stringBet);
 
         map = new HashMap<>();
+        char letter = 'A';
         for (int i = 0; i < allAnswers.size(); i++) {
             TextView tvAnswer = tvAnswers[i];
             String answer = allAnswers.get(i);
-            String letter = LETTERS[i];
 
-            String letterAndAnswer = String.format("%s. %s", letter, answer);
-
+            String letterAndAnswer = String.format("%c. %s", letter, answer);
+            letter++;
             tvAnswer.setText(letterAndAnswer);
             tvAnswer.setTag(answer);
             map.put(answer, tvAnswer);

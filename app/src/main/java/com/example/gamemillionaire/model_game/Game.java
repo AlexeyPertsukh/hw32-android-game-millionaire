@@ -1,8 +1,8 @@
-package com.example.gamemillionaire;
+package com.example.gamemillionaire.model_game;
 
 import android.os.Handler;
 
-import com.example.gamemillionaire.question.Question;
+import com.example.gamemillionaire.model_question.Question;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,9 +10,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class Game implements Serializable {
+    public final static boolean ENABLE_PAUSE = true;
+    public final static boolean DISABLE_PAUSE = false;
+
     private final static String MESSAGE_NO_QUESTIONS = "Нет вопросов для игры";
     private static final int DELAY_INTRIGUE = 3_000;
     private static final int DELAY_AFTER_QUESTION_RESULT = 3_000;
+
+
 
     private final ArrayList<Question> allQuestions;
     private ArrayList<Question> actualQuestions;
@@ -27,9 +32,11 @@ public class Game implements Serializable {
     private String currentAnswer;
 
     private boolean isAnswerExecute;
+    private boolean enablePause;
 
-    public Game(ArrayList<Question> allQuestions) {
+    public Game(ArrayList<Question> allQuestions, boolean enablePause) {
         this.allQuestions = allQuestions;
+        this.enablePause = enablePause;
         round = new Round();
     }
 
@@ -61,28 +68,28 @@ public class Game implements Serializable {
 
 
     private void wrongAnswer() {
-            if(onEndGameListener != null) {
-                onEndGameListener.onEndGame();
-            }
+        if (onEndGameListener != null) {
+            onEndGameListener.onEndGame();
+        }
     }
 
-    private void nextQuestion(){
+    private void nextQuestion() {
         isAnswerExecute = false;
-        if(actualQuestions.size() == 0) {
+        if (actualQuestions.size() == 0) {
             throw new GameException(MESSAGE_NO_QUESTIONS);
         }
 
         round.inc();
         int bet;
-        if(isEnd()) {
-            if(onEndGameListener != null) {
+        if (isEnd()) {
+            if (onEndGameListener != null) {
                 onEndGameListener.onEndGame();
             }
 
         } else {
             int num = random(actualQuestions.size());
             currentQuestion = actualQuestions.remove(num);
-            if(onSelectNewQuestionListener != null) {
+            if (onSelectNewQuestionListener != null) {
                 onSelectNewQuestionListener.onSelectNewQuestion(currentQuestion, round.getBet());
             }
 
@@ -96,29 +103,45 @@ public class Game implements Serializable {
         return answers;
     }
 
-    public boolean checkCorrectAnswer(String answer ){
+    public boolean checkCorrectAnswer(String answer) {
         return currentQuestion.checkCorrectAnswer(answer);
     }
 
     public void sendAnswer(String selectedAnswer) {
-        if(isAnswerExecute || isEnd()) {
+        if (isAnswerExecute || isEnd()) {
             return;
         }
         isAnswerExecute = true;
         currentAnswer = selectedAnswer;
+        if(enablePause) {
+            actionByEnablePause(selectedAnswer);
+        } else {
+            actionByDisablePause(selectedAnswer);
+        }
+    }
+
+    private void actionByEnablePause(String selectedAnswer) {
         onSelectAnswerListener.onSelectAnswer(selectedAnswer);
         Handler handler = new Handler();
         handler.postDelayed(() -> {
-            if(onReportResultListener != null) {
+            if (onReportResultListener != null) {
                 onReportResultListener.onReportQuestionResult(selectedAnswer, currentQuestion.getCorrectAnswer());
             }
-                pauseAfterQuestionResult();
+            pauseAfterQuestionResult();
         }, DELAY_INTRIGUE);
+    }
+
+    private void actionByDisablePause(String selectedAnswer) {
+        if (checkCorrectAnswer(currentAnswer)) {
+            nextQuestion();
+        } else {
+            wrongAnswer();
+        }
     }
 
     private void pauseAfterQuestionResult() {
         Handler handler = new Handler();
-        if(checkCorrectAnswer(currentAnswer)) {
+        if (checkCorrectAnswer(currentAnswer)) {
             handler.postDelayed(this::nextQuestion, DELAY_AFTER_QUESTION_RESULT);
         } else {
             handler.postDelayed(this::wrongAnswer, DELAY_AFTER_QUESTION_RESULT);
@@ -130,15 +153,15 @@ public class Game implements Serializable {
         return round.isEnd();
     }
 
-    void setOnSelectAnswerListener(OnSelectAnswerListener onSelectAnswerListener) {
+    public void setOnSelectAnswerListener(OnSelectAnswerListener onSelectAnswerListener) {
         this.onSelectAnswerListener = onSelectAnswerListener;
     }
 
-    void setOnReportQuestionResultListener(OnReportQuestionResultListener onReportResultListener) {
+    public void setOnReportQuestionResultListener(OnReportQuestionResultListener onReportResultListener) {
         this.onReportResultListener = onReportResultListener;
     }
 
-    void setOnSelectNewQuestionListener(OnSelectNewQuestionListener onSelectNewQuestionListener) {
+    public void setOnSelectNewQuestionListener(OnSelectNewQuestionListener onSelectNewQuestionListener) {
         this.onSelectNewQuestionListener = onSelectNewQuestionListener;
     }
 
@@ -162,17 +185,17 @@ public class Game implements Serializable {
         public Round() {
         }
 
-        public void reset(){
+        public void reset() {
             step = -1;
         }
 
         public void inc() {
-            if(!isEnd()) {
+            if (!isEnd()) {
                 step++;
             }
         }
 
-        public boolean isEnd(){
+        public boolean isEnd() {
             return step >= (BETS.length);
         }
 
@@ -189,7 +212,7 @@ public class Game implements Serializable {
 
             int numQuestion = step;
 
-            if(step >= BETS.length) {
+            if (step >= BETS.length) {
                 numQuestion = BETS.length - 1;
             }
 
@@ -206,22 +229,22 @@ public class Game implements Serializable {
 
     //Слушатели
     @FunctionalInterface
-    interface OnReportQuestionResultListener {
+    public interface OnReportQuestionResultListener {
         void onReportQuestionResult(String selectedAnswer, String correctAnswer);
     }
 
     @FunctionalInterface
-    interface OnSelectAnswerListener {
+    public interface OnSelectAnswerListener {
         void onSelectAnswer(String selectedAnswer);
     }
 
     @FunctionalInterface
-    interface OnSelectNewQuestionListener {
+    public interface OnSelectNewQuestionListener {
         void onSelectNewQuestion(Question question, int bet);
     }
 
     @FunctionalInterface
-    interface OnEndGameListener {
+    public interface OnEndGameListener {
         void onEndGame();
     }
 

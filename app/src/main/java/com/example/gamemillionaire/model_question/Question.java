@@ -1,4 +1,4 @@
-package com.example.gamemillionaire.question;
+package com.example.gamemillionaire.model_question;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
