@@ -15,9 +15,9 @@ import com.example.gamemillionaire.constants.IConst;
 import com.example.gamemillionaire.model_question.Question;
 import com.example.gamemillionaire.model_question.QuestionFabric;
 import com.example.gamemillionaire.model_question.QuestionFabricException;
-import com.example.gamemillionaire.model_readers.DataStrings;
-import com.example.gamemillionaire.model_readers.FileReader;
-import com.example.gamemillionaire.model_readers.TcpClient;
+import com.example.gamemillionaire.model_readers_only_android.DataStrings;
+import com.example.gamemillionaire.model_readers_only_android.FileReader;
+import com.example.gamemillionaire.model_readers_only_android.TcpClient;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

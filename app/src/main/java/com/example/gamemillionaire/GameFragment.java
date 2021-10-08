@@ -136,7 +136,7 @@ public class GameFragment extends Fragment implements IConst, IToast {
         List<String> allAnswers = question.getShuffledAllAnswers();
 
         tvQuestion.setText(question.getStrQuestion());
-        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d %s", bet.getNum(), MONEY_SIGN);
+        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d %s", bet.getAmount(), MONEY_SIGN);
         tvQuestionBet.setText(stringBet);
 
         map = new HashMap<>();

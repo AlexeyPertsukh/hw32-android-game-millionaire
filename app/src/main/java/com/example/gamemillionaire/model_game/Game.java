@@ -154,23 +154,23 @@ public class Game implements Serializable {
 
     //ВЫИГРЫШ
     public static class Result implements Serializable {
-        private int num;
+        private int amount;
         private int numAnswerQuestion;
 
         public void reset() {
-            num = 0;
+            amount = 0;
             numAnswerQuestion = 0;
         }
 
         public void put(Bet bet, int numAnswerQuestion) {
             this.numAnswerQuestion = numAnswerQuestion;
             if(bet.isIrreparable()) {
-                num = bet.getNum();
+                amount = bet.getAmount();
             }
         }
 
-        public int getNum() {
-            return num;
+        public int getAmount() {
+            return amount;
         }
 
         public int getNumAnswerQuestion() {
@@ -179,48 +179,52 @@ public class Game implements Serializable {
     }
 
     //СТАВКА
-    public static class Bet implements Serializable {
-        private final int num;
+    public enum Bet {
+        BET1(100, SIMPLE_BET),
+        BET2(200, SIMPLE_BET),
+        BET3(300, SIMPLE_BET),
+        BET4(500, SIMPLE_BET),
+        BET5(1_000, IRREPARABLE_BET),
+        BET6(2_000, SIMPLE_BET),
+        BET7(4_000, SIMPLE_BET),
+        BET8(8_000, SIMPLE_BET),
+        BET9(16_000, SIMPLE_BET),
+        BET10(32_000, IRREPARABLE_BET),
+        BET11(64_000, SIMPLE_BET),
+        BET12(125_000, SIMPLE_BET),
+        BET13(255_000, SIMPLE_BET),
+        BET14(500_000, SIMPLE_BET),
+        BET15(1_000_000, IRREPARABLE_BET),
+        ;
+        private final int amount;
         private final boolean isIrreparable;
 
-        public Bet(int num, boolean isIrreparable) {
-            this.num = num;
+        Bet(int amount, boolean isIrreparable) {
+            this.amount = amount;
             this.isIrreparable = isIrreparable;
         }
 
-        public static Bet of(int num, boolean isIrreparable) {
-            return new Bet(num, isIrreparable);
-        }
-
-        public int getNum() {
-            return num;
+        public int getAmount() {
+            return amount;
         }
 
         public boolean isIrreparable() {
             return isIrreparable;
         }
+
+        public static int size() {
+            return Bet.values().length;
+        }
+
+        public static Bet get(int num) {
+            Bet[] bets = Bet.values();
+            return bets[num];
+        }
+
     }
 
     //РАУНД
     private static class Round implements Serializable {
-        private final static Bet[] BETS = {
-                Bet.of(100, SIMPLE_BET),
-                Bet.of(200, SIMPLE_BET),
-                Bet.of(300, SIMPLE_BET),
-                Bet.of(500, SIMPLE_BET),
-                Bet.of(1_000, IRREPARABLE_BET),
-                Bet.of(2_000, SIMPLE_BET),
-                Bet.of(4_000, SIMPLE_BET),
-                Bet.of(8_000, SIMPLE_BET),
-                Bet.of(16_000, SIMPLE_BET),
-                Bet.of(32_000, IRREPARABLE_BET),
-                Bet.of(64_000, SIMPLE_BET),
-                Bet.of(125_000, SIMPLE_BET),
-                Bet.of(255_000, SIMPLE_BET),
-                Bet.of(500_000, SIMPLE_BET),
-                Bet.of(1_000_000, IRREPARABLE_BET),
-        };
-
         private int step;
 
         public Round() {
@@ -237,11 +241,11 @@ public class Game implements Serializable {
         }
 
         public boolean isEnd() {
-            return step >= (BETS.length);
+            return step >= (Bet.size());
         }
 
         public Bet getBet() {
-            return BETS[step];
+            return Bet.get(step);
         }
 
         public int getStep() {

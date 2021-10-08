@@ -33,7 +33,7 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
 
         @SuppressLint("DefaultLocale") String message = String.format("Вы правильно ответили на %d %s и выиграли %d %s", numAnswer,
                 stringWordAnswer,
-                result.getNum(),
+                result.getAmount(),
                 MONEY_SIGN
                 );
 
