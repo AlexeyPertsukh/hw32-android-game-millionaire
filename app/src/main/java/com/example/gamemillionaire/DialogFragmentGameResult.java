@@ -21,18 +21,19 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         assert getArguments() != null;
-        Game game = (Game) getArguments().getSerializable(KEY_GAME);
+        Game.Result result = (Game.Result) getArguments().getSerializable(KEY_RESULT);
 
+        int numAnswer = result.getNumAnswerQuestion();
         String stringWordAnswer = "вопросов";
-        if(game.getNumAnswer() == 1) {
+        if(numAnswer == 1) {
             stringWordAnswer = "вопрос";
-        } else if(game.getNumAnswer() == 2 || game.getNumAnswer() == 3 || game.getNumAnswer() == 4) {
+        } else if(numAnswer == 2 || numAnswer == 3 || numAnswer == 4) {
             stringWordAnswer = "вопроса";
         }
 
-        @SuppressLint("DefaultLocale") String message = String.format("Вы правильно ответили на %d %s и выиграли %d %s", game.getNumAnswer(),
+        @SuppressLint("DefaultLocale") String message = String.format("Вы правильно ответили на %d %s и выиграли %d %s", numAnswer,
                 stringWordAnswer,
-                game.getWin(),
+                result.getNum(),
                 MONEY_SIGN
                 );
 

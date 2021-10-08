@@ -13,11 +13,12 @@ public class Game implements Serializable {
     public final static boolean ENABLE_PAUSE = true;
     public final static boolean DISABLE_PAUSE = false;
 
+    public final static boolean SIMPLE_BET = false;
+    public final static boolean IRREPARABLE_BET = true;
+
     private final static String MESSAGE_NO_QUESTIONS = "Нет вопросов для игры";
     private static final int DELAY_INTRIGUE = 3_000;
     private static final int DELAY_AFTER_QUESTION_RESULT = 3_000;
-
-
 
     private final ArrayList<Question> allQuestions;
     private ArrayList<Question> actualQuestions;
@@ -29,20 +30,32 @@ public class Game implements Serializable {
     private OnSelectAnswerListener onSelectAnswerListener;
     private OnEndGameListener onEndGameListener;
 
+    private final State state;
+
     private String currentAnswer;
 
     private boolean isAnswerExecute;
-    private boolean enablePause;
+    private final Result result;
 
     public Game(ArrayList<Question> allQuestions, boolean enablePause) {
         this.allQuestions = allQuestions;
-        this.enablePause = enablePause;
+        state = getState(enablePause);
+        result = new Result();
         round = new Round();
     }
 
     public void reset() {
         createActualQuestions();
         round.reset();
+        result.reset();
+    }
+
+    private State getState(boolean enablePause) {
+        if(enablePause) {
+            return new StateEnabledPause();
+        } else {
+            return new StateDisabledPause();
+        }
     }
 
     private void createActualQuestions() {
@@ -53,12 +66,16 @@ public class Game implements Serializable {
         return actualQuestions.size();
     }
 
-    public int getNumAnswer() {
-        return round.getStep();
+    public int getNumQuestion() {
+        return round.getStep() + 1;
     }
 
-    public int getWin() {
-        return round.getWin();
+    public Result getResult() {
+        return result;
+    }
+
+    private void putResult() {
+        result.put(round.getBet(), round.getStep() + 1);
     }
 
     public void start() {
@@ -66,10 +83,9 @@ public class Game implements Serializable {
         nextQuestion();
     }
 
-
     private void wrongAnswer() {
         if (onEndGameListener != null) {
-            onEndGameListener.onEndGame();
+            onEndGameListener.onEndGame(result);
         }
     }
 
@@ -80,10 +96,9 @@ public class Game implements Serializable {
         }
 
         round.inc();
-        int bet;
         if (isEnd()) {
             if (onEndGameListener != null) {
-                onEndGameListener.onEndGame();
+                onEndGameListener.onEndGame(result);
             }
 
         } else {
@@ -96,13 +111,6 @@ public class Game implements Serializable {
         }
     }
 
-    public static List<String> getShuffledAllAnswers(Question question) {
-        List<String> answers = new ArrayList<>(question.getWrongAnswers());
-        answers.add(question.getCorrectAnswer());
-        Collections.shuffle(answers);
-        return answers;
-    }
-
     public boolean checkCorrectAnswer(String answer) {
         return currentQuestion.checkCorrectAnswer(answer);
     }
@@ -113,40 +121,11 @@ public class Game implements Serializable {
         }
         isAnswerExecute = true;
         currentAnswer = selectedAnswer;
-        if(enablePause) {
-            actionByEnablePause(selectedAnswer);
-        } else {
-            actionByDisablePause(selectedAnswer);
-        }
-    }
-
-    private void actionByEnablePause(String selectedAnswer) {
-        onSelectAnswerListener.onSelectAnswer(selectedAnswer);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            if (onReportResultListener != null) {
-                onReportResultListener.onReportQuestionResult(selectedAnswer, currentQuestion.getCorrectAnswer());
-            }
-            pauseAfterQuestionResult();
-        }, DELAY_INTRIGUE);
-    }
-
-    private void actionByDisablePause(String selectedAnswer) {
-        if (checkCorrectAnswer(currentAnswer)) {
-            nextQuestion();
-        } else {
-            wrongAnswer();
-        }
+        state.sendAnswer(currentAnswer);
     }
 
     private void pauseAfterQuestionResult() {
-        Handler handler = new Handler();
-        if (checkCorrectAnswer(currentAnswer)) {
-            handler.postDelayed(this::nextQuestion, DELAY_AFTER_QUESTION_RESULT);
-        } else {
-            handler.postDelayed(this::wrongAnswer, DELAY_AFTER_QUESTION_RESULT);
-        }
-
+        state.pauseAfterQuestionResult();
     }
 
     public boolean isEnd() {
@@ -173,13 +152,75 @@ public class Game implements Serializable {
         return (int) (Math.random() * max);
     }
 
-    //РАУНД
-    private static class Round {
-        private final int[] BETS = {100, 200, 300, 500, 1000,
-                2_000, 4_000, 8_000, 16_000, 32_000,
-                64_000, 125_000, 255_000, 500_000, 1000_000};
+    //ВЫИГРЫШ
+    public static class Result implements Serializable {
+        private int num;
+        private int numAnswerQuestion;
 
-        private final int[] IRREPARABLE_AMOUNTS = {1000, 32_000, 1000_000};
+        public void reset() {
+            num = 0;
+            numAnswerQuestion = 0;
+        }
+
+        public void put(Bet bet, int numAnswerQuestion) {
+            this.numAnswerQuestion = numAnswerQuestion;
+            if(bet.isIrreparable()) {
+                num = bet.getNum();
+            }
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public int getNumAnswerQuestion() {
+            return numAnswerQuestion;
+        }
+    }
+
+    //СТАВКА
+    public static class Bet implements Serializable {
+        private final int num;
+        private final boolean isIrreparable;
+
+        public Bet(int num, boolean isIrreparable) {
+            this.num = num;
+            this.isIrreparable = isIrreparable;
+        }
+
+        public static Bet of(int num, boolean isIrreparable) {
+            return new Bet(num, isIrreparable);
+        }
+
+        public int getNum() {
+            return num;
+        }
+
+        public boolean isIrreparable() {
+            return isIrreparable;
+        }
+    }
+
+    //РАУНД
+    private static class Round implements Serializable {
+        private final static Bet[] BETS = {
+                Bet.of(100, SIMPLE_BET),
+                Bet.of(200, SIMPLE_BET),
+                Bet.of(300, SIMPLE_BET),
+                Bet.of(500, SIMPLE_BET),
+                Bet.of(1_000, IRREPARABLE_BET),
+                Bet.of(2_000, SIMPLE_BET),
+                Bet.of(4_000, SIMPLE_BET),
+                Bet.of(8_000, SIMPLE_BET),
+                Bet.of(16_000, SIMPLE_BET),
+                Bet.of(32_000, IRREPARABLE_BET),
+                Bet.of(64_000, SIMPLE_BET),
+                Bet.of(125_000, SIMPLE_BET),
+                Bet.of(255_000, SIMPLE_BET),
+                Bet.of(500_000, SIMPLE_BET),
+                Bet.of(1_000_000, IRREPARABLE_BET),
+        };
+
         private int step;
 
         public Round() {
@@ -199,7 +240,7 @@ public class Game implements Serializable {
             return step >= (BETS.length);
         }
 
-        public int getBet() {
+        public Bet getBet() {
             return BETS[step];
         }
 
@@ -207,24 +248,6 @@ public class Game implements Serializable {
             return step;
         }
 
-        public int getWin() {
-            int win = 0;
-
-            int numQuestion = step;
-
-            if (step >= BETS.length) {
-                numQuestion = BETS.length - 1;
-            }
-
-            for (int i = 0; i < IRREPARABLE_AMOUNTS.length; i++) {
-                int bet = BETS[numQuestion];
-                if (bet >= IRREPARABLE_AMOUNTS[i]) {
-                    win = IRREPARABLE_AMOUNTS[i];
-                }
-            }
-
-            return win;
-        }
     }
 
     //Слушатели
@@ -240,12 +263,70 @@ public class Game implements Serializable {
 
     @FunctionalInterface
     public interface OnSelectNewQuestionListener {
-        void onSelectNewQuestion(Question question, int bet);
+        void onSelectNewQuestion(Question question, Bet bet);
     }
 
     @FunctionalInterface
     public interface OnEndGameListener {
-        void onEndGame();
+        void onEndGame(Result result);
     }
 
+    //State - состояние в зависимости от вкл/откл паузы
+    public abstract static class State {
+        public abstract void sendAnswer(String selectedAnswer);
+        public abstract void pauseAfterQuestionResult();
+    }
+
+    public class StateEnabledPause extends State {
+        @Override
+        public void sendAnswer(String selectedAnswer) {
+            if(onSelectAnswerListener != null) {
+                onSelectAnswerListener.onSelectAnswer(selectedAnswer);
+            }
+
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                if (onReportResultListener != null) {
+                    onReportResultListener.onReportQuestionResult(selectedAnswer, currentQuestion.getCorrectAnswer());
+                }
+                pauseAfterQuestionResult();
+            }, DELAY_INTRIGUE);
+        }
+
+        @Override
+        public void pauseAfterQuestionResult() {
+            Handler handler = new Handler();
+            if (checkCorrectAnswer(currentAnswer)) {
+                putResult();
+                handler.postDelayed(Game.this::nextQuestion, DELAY_AFTER_QUESTION_RESULT);
+            } else {
+                handler.postDelayed(Game.this::wrongAnswer, DELAY_AFTER_QUESTION_RESULT);
+            }
+        }
+    }
+
+    public class StateDisabledPause extends State {
+        @Override
+        public void sendAnswer(String selectedAnswer) {
+            if (onSelectAnswerListener != null) {
+                onSelectAnswerListener.onSelectAnswer(selectedAnswer);
+            }
+
+            if (onReportResultListener != null) {
+                onReportResultListener.onReportQuestionResult(selectedAnswer, currentQuestion.getCorrectAnswer());
+            }
+            pauseAfterQuestionResult();
+
+        }
+
+        @Override
+        public void pauseAfterQuestionResult() {
+            if (checkCorrectAnswer(currentAnswer)) {
+                putResult();
+                nextQuestion();
+            } else {
+                wrongAnswer();
+            }
+        }
+    }
 }

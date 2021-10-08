@@ -131,12 +131,12 @@ public class GameFragment extends Fragment implements IConst, IToast {
         }
     }
 
-    void showNewQuestion(Question question, int bet) {
+    void showNewQuestion(Question question, Game.Bet bet) {
         setAllTvAnswersWhite();
         List<String> allAnswers = question.getShuffledAllAnswers();
 
         tvQuestion.setText(question.getStrQuestion());
-        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d %s", bet, MONEY_SIGN);
+        @SuppressLint("DefaultLocale") String stringBet = String.format("Вопрос: %d %s", bet.getNum(), MONEY_SIGN);
         tvQuestionBet.setText(stringBet);
 
         map = new HashMap<>();
@@ -153,18 +153,18 @@ public class GameFragment extends Fragment implements IConst, IToast {
         }
     }
 
-    private void showDialogResult() {
+    private void showDialogResult(Game.Result result) {
         DialogFragmentGameResult dialog = new DialogFragmentGameResult();
         Bundle args = new Bundle();
-        args.putSerializable(KEY_GAME, game);
+        args.putSerializable(KEY_RESULT, result);
         dialog.setArguments(args);
         dialog.setOnClickNewGameListener(()->game.start());
         dialog.setOnClickQuitListener(()->getActivity().finish());
         dialog.show(getActivity().getSupportFragmentManager(), "custom");
     }
 
-    private void onEndGame() {
-            showDialogResult();
+    private void onEndGame(Game.Result result) {
+            showDialogResult(result);
     }
 
     private void sound(int soundCode) {
