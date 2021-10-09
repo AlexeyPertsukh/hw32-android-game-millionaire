@@ -1,8 +1,10 @@
 package com.example.gamemillionaire.constants;
 
 public interface IConst {
-    String host = "192.168.0.100";
-    int port = 6789;
+    String HOST = "192.168.0.100";
+    int PORT = 6789;
+    int TIMEOUT = 3000;
+    String QUERY = "select *";
 
     String KEY_QUESTIONS = "key_questions";
     String KEY_GAME = "key_game";

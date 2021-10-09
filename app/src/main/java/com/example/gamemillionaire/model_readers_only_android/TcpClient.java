@@ -6,17 +6,16 @@ import android.util.Log;
 
 import com.example.gamemillionaire.constants.IConst;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class TcpClient implements IConst {
     private final static String FORMAT_MESSAGE_FAILED_CONNECTION = "Не удалось получить данные с сервера %s : %d ";
-    private final static String QUERY = "select *";
 
     private boolean isExecute;
 
@@ -45,7 +44,7 @@ public class TcpClient implements IConst {
 
         private Socket socket;
 
-        private ArrayList<String> list;
+        private ArrayList<String> strings;
 
         @Override
         protected void onPreExecute() {
@@ -55,27 +54,36 @@ public class TcpClient implements IConst {
         @Override
         protected DataStrings doInBackground(InetSocketAddress... socketAddresses) {
             Exception exception = null;
-            list = new ArrayList<>();
+            strings = new ArrayList<>();
             InetSocketAddress socketAddress = socketAddresses[0];
             try {
                 socket = new Socket();
-                socket.connect(socketAddress, 5000);
+                socket.connect(socketAddress, 3000);
                 if (socket.isConnected()) {
                     sendQuery();
                     readServer();
                 }
-            } catch (IOException e) {
+                socket.close();
+            } catch (IOException | ClassNotFoundException e) {
                 Log.d("LOG", "IOException on doInBackground");
                 @SuppressLint("DefaultLocale") String message = String.format(FORMAT_MESSAGE_FAILED_CONNECTION,
                         socketAddress.getHostString(), socketAddress.getPort());
                 exception = new ConnectException(message);
             }
-            return new DataStrings(list, exception);
+            return new DataStrings(strings, exception);
         }
 
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(DataStrings dataStrings) {
+            super.onPostExecute(dataStrings);
+            if(onEndReadStringsListener != null) {
+                onEndReadStringsListener.action(dataStrings);
+            }
         }
 
         private void sendQuery() throws IOException {
@@ -84,17 +92,12 @@ public class TcpClient implements IConst {
             printWriter.flush();
         }
 
-        private void readServer() throws IOException {
-            String text;
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            int i = 0;
-            while ((text = in.readLine()) != null) {
-                list.add(text);
-                if (i++ >= 32) {
-                    break;
-                }
-            }
+        private void readServer() throws IOException, ClassNotFoundException {
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+            strings = (ArrayList<String>)in.readObject();
+            in.close();
         }
+
     }
 
 
