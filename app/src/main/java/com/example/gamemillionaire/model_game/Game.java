@@ -97,6 +97,7 @@ public class Game implements Serializable {
 
         round.inc();
         if (isEnd()) {
+            result.setFullWin();
             if (onEndGameListener != null) {
                 onEndGameListener.onEndGame(result);
             }
@@ -156,10 +157,12 @@ public class Game implements Serializable {
     public static class Result implements Serializable {
         private int amount;
         private int numAnswerQuestion;
+        private boolean isFullWin;
 
         public void reset() {
             amount = 0;
             numAnswerQuestion = 0;
+            isFullWin = false;
         }
 
         public void put(Bet bet, int numAnswerQuestion) {
@@ -175,6 +178,14 @@ public class Game implements Serializable {
 
         public int getNumAnswerQuestion() {
             return numAnswerQuestion;
+        }
+
+        public boolean isFullWin() {
+            return isFullWin;
+        }
+
+        public void setFullWin() {
+            isFullWin = true;
         }
     }
 
@@ -211,6 +222,7 @@ public class Game implements Serializable {
         public boolean isIrreparable() {
             return isIrreparable;
         }
+
 
         public static int size() {
             return Bet.values().length;
