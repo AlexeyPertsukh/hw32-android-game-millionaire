@@ -2,6 +2,11 @@ Game "Who Wants to Be a Millionaire?"
 
 ----
 
+Lesson theme:
+
+• Async
+• MVC
+
 Server questions for game: 
 
 https://github.com/AlexeyPertsukh/hw32-java-server-questions-game-millionaire
