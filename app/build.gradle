@@ -4,10 +4,10 @@ plugins {
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "29.0.2"
 
     defaultConfig {
-        applicationId "com.example.gamemillionair"
+        applicationId "com.example.gamemillionaire"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1

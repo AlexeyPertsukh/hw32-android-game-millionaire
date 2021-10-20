@@ -13,7 +13,6 @@
         <item name="android:gravity">left|center</item>
         <item name="android:textColor">@color/gray</item>
         <item name="android:paddingLeft">10sp</item>
-
     </style>
 
 </resources>

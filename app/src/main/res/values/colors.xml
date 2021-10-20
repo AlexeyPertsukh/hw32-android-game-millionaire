@@ -14,5 +14,9 @@
     <color name="black_overlay">#66000000</color>
     <color name="green">#FF4CAF50</color>
     <color name="gray">#444544</color>
+    <color name="light_gray">#9EA19E</color>
+    <color name="orange">#ED6135</color>
+    <color name="yellow">#FFC107</color>
+    <color name="red">#E91E63</color>
 </resources>
 

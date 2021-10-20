@@ -1,16 +1,20 @@
-package com.example.gamemillionair;
+package com.example.gamemillionaire;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import com.example.gamemillionair.R;
+import com.example.gamemillionaire.constants.IConst;
+import com.example.gamemillionaire.model_game.Game;
+import com.example.gamemillionaire.model_question.Question;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements IToast, IConst {
 
-    private ConnectFragment connectFragment;
     private GameFragment gameFragment;
-
+    private InputQuestionsFragment inputQuestionsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,26 +22,24 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
         setContentView(R.layout.activity_main);
 
         initFragments();
-        showConnectFragment();
+        showInputQuestionsFragment();
     }
 
     private void initFragments() {
-        connectFragment = new ConnectFragment();
         gameFragment = new GameFragment();
+        inputQuestionsFragment = new InputQuestionsFragment();
     }
 
-
-    public void showConnectFragment() {
+    public void showInputQuestionsFragment() {
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainer, connectFragment)
+                .replace(R.id.fragmentContainer, inputQuestionsFragment)
                 .commit();
     }
 
-    public void showGameFragment(ArrayList<String> list) {
+    public void showGameFragment(ArrayList<Question> listQuestion) {
         Bundle args = new Bundle();
-
-        Game game = Game.ofJsonQuestions(list);
+        Game game = new Game(listQuestion, Game.ENABLE_PAUSE);
 
         args.putSerializable(KEY_GAME, game);
 
@@ -47,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements IToast, IConst {
                 .replace(R.id.fragmentContainer, gameFragment)
                 .commit();
     }
-
-
 
 
 
