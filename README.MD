@@ -5,6 +5,9 @@ Game "Who Wants to Be a Millionaire?"
 Lesson theme:
 
 • Async
+
+Features of the program code:
+
 • MVC
 
 Server questions for game: 
