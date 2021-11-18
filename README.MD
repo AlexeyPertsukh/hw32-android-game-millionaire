@@ -28,6 +28,6 @@ https://github.com/AlexeyPertsukh/additional-java-game-millionaire
 
 ![alt text](Screenshot_5.jpg)
 
-![alt text](class_diagram.jpeg)
+![alt text](https://github.com/AlexeyPertsukh/additional-java-game-millionaire/blob/master/class_diagram.jpeg)
 
 [04.09.2021]
