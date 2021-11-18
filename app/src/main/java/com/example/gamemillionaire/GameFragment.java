@@ -177,7 +177,6 @@ public class GameFragment extends Fragment implements IConst, IToast {
     }
 
     private void onEndGame() {
-//        longToast(getContext(),"LOSE");
         showDialogGameResult();
     }
 
