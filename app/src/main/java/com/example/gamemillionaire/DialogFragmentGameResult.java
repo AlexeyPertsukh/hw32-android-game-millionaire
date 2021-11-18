@@ -10,20 +10,22 @@ import androidx.fragment.app.DialogFragment;
 
 import android.app.AlertDialog;
 
+import com.example.gamemillionair.R;
 import com.example.gamemillionaire.constants.IConst;
-import com.example.gamemillionaire.model_game.Game;
+import com.example.gamemillionaire.model_game_with_listeners.GameWithListeners;
 
-public class DialogFragmentGameResult extends DialogFragment implements IConst {
+public class DialogFragmentGameResult extends DialogFragment implements IConst, IToast {
 
     private OnClickNewGameListener onClickNewGameListener;
     private OnClickQuitListener onClickQuitListener;
+    private DialogInterface.OnCancelListener onCancelListener;
 
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         assert getArguments() != null;
-        Game.Result result = (Game.Result) getArguments().getSerializable(KEY_RESULT);
+        GameWithListeners game = (GameWithListeners) getArguments().getSerializable(KEY_GAME);
 
-        int numAnswer = result.getNumAnswerQuestion();
+        int numAnswer = game.getNumCorrectAnswers();
         String stringWordAnswer = "вопросов";
         if(numAnswer == 1) {
             stringWordAnswer = "вопрос";
@@ -33,7 +35,7 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
 
         @SuppressLint("DefaultLocale") String message = String.format("Вы правильно ответили на %d %s и выиграли %d %s", numAnswer,
                 stringWordAnswer,
-                result.getAmount(),
+                game.getWinningAmount(),
                 MONEY_SIGN
                 );
 
@@ -41,6 +43,7 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder
                 .setMessage(message)
+                .setCancelable(false)
                 .setPositiveButton("Новая игра", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -58,7 +61,12 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
                     }
                 })
                 .create();
+
+
+
+
     }
+
 
     public void setOnClickNewGameListener(OnClickNewGameListener onClickNewGameListener) {
         this.onClickNewGameListener = onClickNewGameListener;
@@ -66,6 +74,10 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
 
     public void setOnClickQuitListener(OnClickQuitListener onClickQuitListener) {
         this.onClickQuitListener = onClickQuitListener;
+    }
+
+    public void setOnCancelListener(DialogInterface.OnCancelListener onCancelListener) {
+        this.onCancelListener = onCancelListener;
     }
 
     //interfaces
@@ -76,6 +88,8 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst {
     interface OnClickQuitListener {
         void action();
     }
+
+
 
 
 }

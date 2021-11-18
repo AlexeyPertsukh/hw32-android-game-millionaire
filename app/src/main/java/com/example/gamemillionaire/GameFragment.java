@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.example.gamemillionair.R;
 import com.example.gamemillionaire.constants.IConst;
 import com.example.gamemillionaire.model_game.*;
+import com.example.gamemillionaire.model_game_with_listeners.GameWithListeners;
 import com.example.gamemillionaire.model_question.*;
 
 import java.util.HashMap;
@@ -29,11 +31,13 @@ public class GameFragment extends Fragment implements IConst, IToast {
     private static final int CODE_SOUND_WRONG_ANSWER = 1;
     private static final int CODE_SOUND_CORRECT_ANSWER = 2;
 
-    private Game game;
+    private GameWithListeners game;
 
     private TextView tvQuestion;
     private TextView[] tvAnswers;
     private TextView tvQuestionBet;
+
+    private TextView tvNewGame;
 
     private Map<String, TextView> map;
 
@@ -54,10 +58,10 @@ public class GameFragment extends Fragment implements IConst, IToast {
         initSound();
 
         if(getArguments() != null) {
-            game = (Game) getArguments().getSerializable(KEY_GAME);
+            game = (GameWithListeners) getArguments().getSerializable(KEY_GAME);
             game.setOnSelectAnswerListener(this::showSelectAnswer);
             game.setOnSelectNewQuestionListener(this::showNewQuestion);
-            game.setOnReportQuestionResultListener(this::showResult);
+            game.setOnRoundResultListener(this::showResult);
             game.setOnEndGameListener(this::onEndGame);
             game.start();
         }
@@ -70,6 +74,12 @@ public class GameFragment extends Fragment implements IConst, IToast {
         for (TextView tvAnswer : tvAnswers) {
             tvAnswer.setOnClickListener(this::clickAnswer);
         }
+        tvNewGame.setOnClickListener(this::clickNewGame);
+    }
+
+    private void clickNewGame(View view) {
+        game.start();
+        tvNewGame.setVisibility(View.GONE);
     }
 
     private void clickAnswer(View view) {
@@ -85,6 +95,9 @@ public class GameFragment extends Fragment implements IConst, IToast {
         tvAnswers[1] = view.findViewById(R.id.tvAnswer2);
         tvAnswers[2] = view.findViewById(R.id.tvAnswer3);
         tvAnswers[3] = view.findViewById(R.id.tvAnswer4);
+
+        tvNewGame = view.findViewById(R.id.tvNewGame);
+
 
         setAllTvAnswersWhite();
     }
@@ -127,6 +140,8 @@ public class GameFragment extends Fragment implements IConst, IToast {
     }
 
     void showNewQuestion(Question question, Game.Bet bet) {
+        tvNewGame.setVisibility(View.GONE);
+
         setAllTvAnswersWhite();
         List<String> allAnswers = question.getShuffledAllAnswers();
 
@@ -148,18 +163,21 @@ public class GameFragment extends Fragment implements IConst, IToast {
         }
     }
 
-    private void showDialogResult(Game.Result result) {
+    private void showDialogGameResult() {
         DialogFragmentGameResult dialog = new DialogFragmentGameResult();
         Bundle args = new Bundle();
-        args.putSerializable(KEY_RESULT, result);
+        args.putSerializable(KEY_GAME, game);
         dialog.setArguments(args);
         dialog.setOnClickNewGameListener(()->game.start());
         dialog.setOnClickQuitListener(()->getActivity().finish());
         dialog.show(getActivity().getSupportFragmentManager(), "custom");
+        tvNewGame.setVisibility(View.VISIBLE);
+
     }
 
-    private void onEndGame(Game.Result result) {
-            showDialogResult(result);
+    private void onEndGame() {
+//        longToast(getContext(),"LOSE");
+        showDialogGameResult();
     }
 
     private void sound(int soundCode) {

@@ -5,9 +5,8 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/background_millionaire"
-    >
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvQuestionBet"
@@ -43,8 +42,7 @@
         android:text="Answer1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvQuestion"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tvQuestion" />
 
     <TextView
         android:id="@+id/tvAnswer2"
@@ -52,11 +50,10 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/draw_tv_white"
         android:gravity="left|center"
+        android:text="Answer2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAnswer1"
-        android:text="Answer2"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tvAnswer1" />
 
     <TextView
         android:id="@+id/tvAnswer3"
@@ -64,11 +61,10 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/draw_tv_white"
         android:gravity="left|center"
+        android:text="Answer3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAnswer2"
-        android:text="Answer3"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tvAnswer2" />
 
     <TextView
         android:id="@+id/tvAnswer4"
@@ -76,11 +72,22 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/draw_tv_white"
         android:gravity="left|center"
+        android:text="Answer4"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAnswer3"
-        android:text="Answer4"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tvAnswer3" />
 
+    <TextView
+        android:id="@+id/tvNewGame"
+        style="@style/StyleTvAnswer"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/draw_tv_white"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:text="НОВАЯ ИГРА"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvAnswer4"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
