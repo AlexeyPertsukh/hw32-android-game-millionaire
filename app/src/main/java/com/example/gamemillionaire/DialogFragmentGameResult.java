@@ -16,9 +16,8 @@ import com.example.gamemillionaire.model_game_with_listeners.GameWithListeners;
 
 public class DialogFragmentGameResult extends DialogFragment implements IConst, IToast {
 
-    private OnClickNewGameListener onClickNewGameListener;
-    private OnClickQuitListener onClickQuitListener;
-    private DialogInterface.OnCancelListener onCancelListener;
+    private DialogInterface.OnClickListener onClickNewGameListener;
+    private DialogInterface.OnClickListener onClickQuitListener;
 
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -44,52 +43,16 @@ public class DialogFragmentGameResult extends DialogFragment implements IConst, 
         return builder
                 .setMessage(message)
                 .setCancelable(false)
-                .setPositiveButton("Новая игра", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        if(onClickNewGameListener != null) {
-                            onClickNewGameListener.action();
-                        }
-                    }
-                })
-                .setNegativeButton("Выход", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        if(onClickQuitListener != null) {
-                            onClickQuitListener.action();
-                        }
-                    }
-                })
+                .setPositiveButton("Новая игра", onClickNewGameListener)
+                .setNegativeButton("Выход", onClickQuitListener)
                 .create();
-
-
-
-
     }
 
-
-    public void setOnClickNewGameListener(OnClickNewGameListener onClickNewGameListener) {
+    public void setOnClickNewGameListener(DialogInterface.OnClickListener onClickNewGameListener) {
         this.onClickNewGameListener = onClickNewGameListener;
     }
 
-    public void setOnClickQuitListener(OnClickQuitListener onClickQuitListener) {
+    public void setOnClickQuitListener(DialogInterface.OnClickListener onClickQuitListener) {
         this.onClickQuitListener = onClickQuitListener;
     }
-
-    public void setOnCancelListener(DialogInterface.OnCancelListener onCancelListener) {
-        this.onCancelListener = onCancelListener;
-    }
-
-    //interfaces
-    interface OnClickNewGameListener {
-        void action();
-    }
-
-    interface OnClickQuitListener {
-        void action();
-    }
-
-
-
-
 }

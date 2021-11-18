@@ -1,6 +1,7 @@
 package com.example.gamemillionaire;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -168,8 +169,8 @@ public class GameFragment extends Fragment implements IConst, IToast {
         Bundle args = new Bundle();
         args.putSerializable(KEY_GAME, game);
         dialog.setArguments(args);
-        dialog.setOnClickNewGameListener(()->game.start());
-        dialog.setOnClickQuitListener(()->getActivity().finish());
+        dialog.setOnClickNewGameListener((v, i)->game.start());
+        dialog.setOnClickQuitListener((v,i)->getActivity().finish());
         dialog.show(getActivity().getSupportFragmentManager(), "custom");
         tvNewGame.setVisibility(View.VISIBLE);
 
